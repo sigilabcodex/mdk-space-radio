@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MDK Space Radio · 24/7 Experimental Electronic Transmission</title>
+  <meta name="description" content="MDK Space Radio — 24/7 experimental electronic transmissions from the MDK archive. IDM, noise, glitch, drone, dub, sampledelia, techno and beyond.">
+  <link rel="canonical" href="https://radio.mdkband.com/">
+  <link rel="icon" href="/assets/brand/mdk_radio-logo-white.svg" type="image/svg+xml">
+  <link rel="alternate icon" href="/assets/brand/mdk_radio-logo.png" type="image/png">
+  <meta name="theme-color" content="#070807">
+  <meta property="og:title" content="MDK Space Radio · 24/7 Experimental Electronic Transmission">
+  <meta property="og:description" content="24/7 experimental electronic transmissions from the MDK archive. IDM, noise, glitch, drone, dub, sampledelia, techno and beyond.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://radio.mdkband.com/">
+  <meta property="og:image" content="https://radio.mdkband.com/assets/brand/MDK_RADIO_2.JPG">
+  <meta property="og:image:alt" content="MDK Space Radio visual identity and experimental broadcast artwork">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="MDK Space Radio · 24/7 Experimental Electronic Transmission">
+  <meta name="twitter:description" content="24/7 experimental electronic transmissions from the MDK archive. IDM, noise, glitch, drone, dub, sampledelia, techno and beyond.">
+  <meta name="twitter:image" content="https://radio.mdkband.com/assets/brand/MDK_RADIO_2.JPG">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="view-radio">
+  <div class="ambient-background" aria-hidden="true">
+    <canvas id="butterchurnCanvas" class="butterchurn-canvas"></canvas>
+    <div id="ambientDisplay" class="ambient-display" data-visual-slot="butterchurn">
+      <div class="ambient-grid"></div>
+      <div class="ambient-traces">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+
+  <div id="welcomeModal" class="welcome-modal" hidden>
+    <div class="welcome-backdrop" data-welcome-close aria-hidden="true"></div>
+    <section class="welcome-dialog" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle" aria-describedby="welcomeBody welcomeWarning">
+      <button id="welcomeCloseBtn" class="welcome-close" type="button" aria-label="Close welcome message">×</button>
+      <div class="welcome-kicker">New listener</div>
+      <h2 id="welcomeTitle">MDK Space Radio</h2>
+      <p id="welcomeBody">24/7 experimental electronic radio by MDK. Press CONNECT to listen, adjust volume, and switch between RADIO, FOCUS, and IMMERSIVE.</p>
+      <p id="welcomeWarning" class="welcome-warning">Visuals can flash, move, and strobe. If you are sensitive to light or motion, start in FOCUS.</p>
+      <label class="welcome-check">
+        <input id="welcomeDontShow" type="checkbox">
+        <span>Don't show this again</span>
+      </label>
+      <div class="welcome-actions">
+        <button id="welcomeEnterRadio" class="welcome-primary" type="button">Enter Radio</button>
+        <button id="welcomeStartFocus" class="welcome-secondary" type="button">Start in Focus</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="shell">
+    <main class="terminal">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-logo" aria-label="MDK Space Radio">
+            <span class="brand-mark">MDK</span>
+            <span class="brand-signal" aria-hidden="true"></span>
+            <span class="brand-title">Space Radio</span>
+          </div>
+          <div class="brand-sub">24/7 experimental electronic transmission</div>
+        </div>
+        <div class="topbar-actions">
+          <div class="view-mode-switch" aria-label="Interface mode">
+            <button class="view-mode-btn" type="button" data-view-mode="radio" aria-pressed="true">Radio</button>
+            <button class="view-mode-btn" type="button" data-view-mode="focus" aria-pressed="false">Focus</button>
+            <button class="view-mode-btn" type="button" data-view-mode="immersive" aria-pressed="false">Immersive</button>
+          </div>
+          <div class="live-pill"><span class="dot"></span><span id="liveText">LIVE</span></div>
+          <time id="localClock" class="local-clock" aria-label="Local time">--:--</time>
+        </div>
+      </header>
+
+      <section class="content">
+        <section class="main-panel">
+          <article class="now-card">
+            <img id="cover" class="cover" src="" alt="Current MDK release cover">
+            <div class="meta">
+              <div class="label">Now transmitting</div>
+              <h1 id="track" class="track">Acquiring signal…</h1>
+              <p id="release" class="release">MDK archive</p>
+
+              <div class="progress-wrap" aria-label="Track progress">
+                <div class="progress-time">
+                  <span id="elapsed">0:00</span>
+                  <span id="duration">--:--</span>
+                </div>
+                <div class="progress">
+                  <div id="progressBar" class="progress-bar"></div>
+                </div>
+              </div>
+
+              <div class="controls player-controls">
+                <button id="playBtn" type="button" aria-label="Mute or unmute stream">Connect</button>
+                <label class="label" for="volume">volume</label>
+                <input id="volume" type="range" min="0" max="1" step="0.01" value="0.85" aria-label="Volume">
+              </div>
+
+              <div class="controls track-links">
+                <a id="archiveLink" class="link-btn" href="#" target="_blank" rel="noopener">Archive</a>
+                <a id="bandcampLink" class="link-btn" href="#" target="_blank" rel="noopener">Bandcamp</a>
+                <a class="link-btn" href="/stream.mp3">Direct stream</a>
+              </div>
+
+              <div class="controls support-links" aria-label="Support MDK">
+                <span class="label">support</span>
+                <a class="link-btn" href="https://coff.ee/mdk.band" target="_blank" rel="noopener">Coffee</a>
+                <a class="link-btn" href="https://ko-fi.com/mdklabs" target="_blank" rel="noopener">Ko-fi</a>
+                <a class="link-btn" href="https://mdklabs.bandcamp.com/precognition" target="_blank" rel="noopener">Bandcamp</a>
+              </div>
+            </div>
+          </article>
+
+          <section class="about-card" aria-label="About MDK">
+            <div class="label">About MDK</div>
+            <p>MDK is Mik Schuppin, Diego Madero &amp; Kai Kraatz — three humans improvising electronic music remotely between Germany and Mexico.</p>
+            <div class="about-links">
+              <a class="link-btn" href="https://mdkband.com/" target="_blank" rel="noopener">Website</a>
+              <a class="link-btn" href="https://www.youtube.com/@mdklabs" target="_blank" rel="noopener">YouTube</a>
+              <a class="link-btn" href="https://mdklabs.bandcamp.com/" target="_blank" rel="noopener">Bandcamp</a>
+              <a class="link-btn" href="https://mdkband.com/jam" target="_blank" rel="noopener">Jamulus</a>
+            </div>
+          </section>
+
+          <section class="subgrid">
+            <div class="box monitor">
+              <div class="label">Spectrum monitor</div>
+              <div id="spectrumWrap" class="spectrum-wrap">
+                <canvas id="spectrum" aria-hidden="true"></canvas>
+                <div class="bars" aria-hidden="true">
+                  <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                  <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                </div>
+              </div>
+              <div class="telemetry-bars" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <div class="label">live spectrum</div>
+            </div>
+
+            <div class="box log">
+              <div class="label">Transmission log</div>
+              <p id="logLine">Waiting for MDK Space Radio telemetry…</p>
+            </div>
+          </section>
+        </section>
+      </section>
+
+      <footer class="footer">
+        <span id="statusLine">status: acquiring signal</span>
+        <span title="Music by MDK: Mik Schuppin, Diego Madero & Kai Kraatz">music by MDK · <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener" aria-label="Creative Commons Attribution 3.0 License">CC BY 3.0</a></span>
+        <span><a href="https://mdkband.com/" target="_blank" rel="noopener">mdkband.com</a></span>
+      </footer>
+
+      <button id="deepImmersiveBtn" class="deep-immersive-toggle" type="button" aria-pressed="false" aria-label="Toggle deep immersive mode">Deep</button>
+      <div id="deepImmersiveChrome" class="deep-immersive-chrome" hidden>
+        <div class="deep-mini-now">
+          <span id="deepMiniTrack" class="deep-mini-track">Acquiring signal…</span>
+          <span id="deepMiniRelease" class="deep-mini-release">MDK archive</span>
+          <span id="deepMiniStatus" class="deep-mini-status">status live</span>
+          <span id="deepMiniMeta" class="deep-mini-meta">160 kbps · mp3</span>
+          <span class="deep-mini-credit">music by MDK · CC BY 3.0</span>
+        </div>
+        <button id="deepExitBtn" class="deep-exit" type="button">Back to Immersive</button>
+      </div>
+    </main>
+  </div>
+
+  <audio id="radio" preload="none" crossorigin="anonymous" src="/stream.mp3"></audio>
+
+  <script src="app.js"></script>
+</body>
+</html>
