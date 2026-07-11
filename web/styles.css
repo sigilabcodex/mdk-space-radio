@@ -716,6 +716,10 @@
       margin-top: 0;
     }
 
+    .track-links {
+      gap: 8px;
+    }
+
     .support-links .label {
       margin-right: 2px;
     }
@@ -1685,6 +1689,11 @@
       .brand-title {
         font-size: clamp(0.86rem, 4.6vw, 1.1rem);
         letter-spacing: 0.12em;
+      }
+
+      .track-links .link-btn {
+        padding: 8px 10px;
+        font-size: 0.76rem;
       }
 
       body.view-immersive .topbar {
