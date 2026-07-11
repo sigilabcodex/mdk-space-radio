@@ -1,0 +1,13 @@
+[Unit]
+Description=Generate MDK Space Radio static play-history report
+After=local-fs.target
+
+[Service]
+Type=oneshot
+User=diego
+Group=diego
+WorkingDirectory=/opt/swr-radio
+ExecStart=/opt/swr-radio/bin/generate-play-report.py --database /opt/swr-radio/data/play-history.sqlite3 --template /opt/swr-radio/web/stats/index.template.html --css /opt/swr-radio/web/stats/stats.css --html-output /home/mdk/web/radio.mdkband.com/public_html/stats/index.html --json-output /home/mdk/web/radio.mdkband.com/public_html/stats/stats.json
+
+[Install]
+WantedBy=multi-user.target

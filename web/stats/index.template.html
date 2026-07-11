@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MDK Space Radio · Play Statistics</title>
+  <meta name="description" content="Persistent play statistics for MDK Space Radio">
+  <style>$css</style>
+</head>
+<body>
+  <header>
+    <p class="eyebrow">MDK SPACE RADIO / TELEMETRY</p>
+    <h1>Play history</h1>
+    <p class="notice">Tracking begins at <strong>$tracking_start</strong>. Earlier broadcasts are not included.</p>
+    <p>Period end: $period_end · Updated: <time>$generated_at</time></p>
+  </header>
+  <main>
+    <section class="cards" aria-label="Summary">
+      <article><strong>$total_plays</strong><span>Total plays</span></article>
+      <article><strong>$unique_tracks</strong><span>Unique tracks played</span></article>
+      <article><strong>$unique_albums</strong><span>Unique albums played</span></article>
+      <article><strong>$catalog_tracks</strong><span>Catalog tracks</span></article>
+      <article><strong>$catalog_albums</strong><span>Catalog albums</span></article>
+    </section>
+    <section><h2>Latest transmission</h2><p>$last_play</p></section>
+    <section>
+      <h2>Optional table filters</h2>
+      <label>Search <input id="search" type="search" placeholder="Track, album or ID"></label>
+      <label>Table <select id="tableFilter"><option value="all">All</option><option value="most-played">Most played</option><option value="least-played">Least played</option><option value="never-played">Never played</option><option value="albums">Albums</option><option value="recent">Recent</option></select></label>
+      <noscript><p>All report content remains available without JavaScript.</p></noscript>
+    </section>
+    <section class="report-section" data-table-section="most-played"><h2>Most played tracks</h2><div class="table-wrap">$most_played_table</div></section>
+    <section class="report-section" data-table-section="least-played"><h2>Least played among played tracks</h2><div class="table-wrap">$least_played_table</div></section>
+    <section class="report-section" data-table-section="never-played"><h2>Never played during tracking period</h2><div class="table-wrap">$never_played_table</div></section>
+    <section class="report-section" data-table-section="albums"><h2>Album ranking and balance</h2><div class="table-wrap">$album_table</div></section>
+    <section>
+      <h2>Nearby album repetitions</h2>
+      <ul><li>Within 3 positions: $repeat_3</li><li>Within 5 positions: $repeat_5</li><li>Within 10 positions: $repeat_10</li></ul>
+    </section>
+    <section class="report-section" data-table-section="recent"><h2>Latest 200 plays</h2><div class="table-wrap">$recent_table</div></section>
+    <section>
+      <h2>Methodology and limitations</h2>
+      <p>One committed source-track start event equals one play. Consecutive plays count separately.</p>
+      <p>Expected album plays are proportional to each album's number of radio-ready catalog tracks. Observed/expected values above 1 indicate overrepresentation and values below 1 indicate underrepresentation.</p>
+      <p>A nearby album repetition occurs when the same album appeared among the preceding 3, 5 or 10 plays. Current drought is elapsed UTC time since a track's last recorded play.</p>
+      <p>This is not retrospective. Missing source callbacks or catalog outages can produce gaps. “Never played” means never observed since the tracking start shown above.</p>
+    </section>
+  </main>
+  <footer><a href="/">Return to MDK Space Radio</a></footer>
+  <script>
+  (() => {
+    const search = document.getElementById('search');
+    const selector = document.getElementById('tableFilter');
+    const apply = () => {
+      const query = search.value.toLocaleLowerCase();
+      document.querySelectorAll('.report-section').forEach(section => {
+        section.hidden = selector.value !== 'all' && section.dataset.tableSection !== selector.value;
+        section.querySelectorAll('tbody tr').forEach(row => {
+          row.hidden = query !== '' && !(row.dataset.search || '').toLocaleLowerCase().includes(query);
+        });
+      });
+    };
+    search.addEventListener('input', apply);
+    selector.addEventListener('change', apply);
+  })();
+  </script>
+</body>
+</html>

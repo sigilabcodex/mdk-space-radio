@@ -1,0 +1,11 @@
+[Unit]
+Description=Refresh MDK Space Radio play-history report every five minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+Persistent=true
+Unit=mdk-play-report.service
+
+[Install]
+WantedBy=timers.target
