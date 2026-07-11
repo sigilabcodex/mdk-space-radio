@@ -29,3 +29,10 @@ assets/
 
 # Local Liquidsoap backups
 swr-radio.liq.bak-*
+
+# MDK Space Radio play-history runtime
+data/play-history.sqlite3
+data/play-history.sqlite3-wal
+data/play-history.sqlite3-shm
+cache/play-history-spool/
+cache/play-report-state.json

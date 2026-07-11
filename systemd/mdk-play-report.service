@@ -1,6 +1,7 @@
 [Unit]
 Description=Generate MDK Space Radio static play-history report
 After=local-fs.target
+ConditionPathExists=/opt/swr-radio/data/play-history.sqlite3
 
 [Service]
 Type=oneshot
