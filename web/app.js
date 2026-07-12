@@ -1,3 +1,5 @@
+    const viewProfile = window.ViewProfile.applyViewProfile(document, window.location.search);
+    const isBroadcastView = viewProfile === 'broadcast';
     const radio = document.getElementById('radio');
     const playBtn = document.getElementById('playBtn');
     const volume = document.getElementById('volume');
@@ -81,6 +83,14 @@
 
       bandcampLink.hidden = !bandcampUrl || (cta && bandcampUrl === cta.url);
       if (bandcampUrl) bandcampLink.href = bandcampUrl;
+    }
+
+    function updateBroadcastPresentation(data) {
+      if (!isBroadcastView) return;
+
+      // Future broadcast feature/immersive state transitions connect here.
+      // The timing inputs are data.track_elapsed_seconds,
+      // data.track_remaining_seconds and data.track_duration_seconds.
     }
 
     function loadScript(src) {
@@ -696,6 +706,7 @@
         const data = await res.json();
         current = data;
         receivedAt = Date.now();
+        updateBroadcastPresentation(data);
 
         track.textContent = data.track_title || data.icecast_title || 'Unknown transmission';
         release.textContent = [data.release_id, data.release_title].filter(Boolean).join(' · ') || 'MDK archive';
@@ -811,7 +822,7 @@
     });
 
     setViewMode('radio');
-    initWelcomeModal();
+    if (!isBroadcastView) initWelcomeModal();
     updateLocalClock();
     loadNowPlaying();
     setInterval(loadNowPlaying, 10000);
