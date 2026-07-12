@@ -11,8 +11,8 @@
   <header>
     <p class="eyebrow">MDK SPACE RADIO / TELEMETRY</p>
     <h1>Play history</h1>
-    <p class="notice">Tracking begins at <strong>$tracking_start</strong>. Earlier broadcasts are not included.</p>
-    <p>Period end: $period_end · Updated: <time>$generated_at</time></p>
+    $tracking_status
+    $period_status
   </header>
   <main>
     <section class="cards" aria-label="Summary">
@@ -49,6 +49,19 @@
   <footer><a href="/">Return to MDK Space Radio</a></footer>
   <script>
   (() => {
+    const localDateFormatter = new Intl.DateTimeFormat(undefined, {
+      dateStyle: 'medium',
+      timeStyle: 'medium'
+    });
+    document.querySelectorAll('time.local-time').forEach(element => {
+      const utcTimestamp = element.getAttribute('datetime');
+      if (!utcTimestamp) return;
+      const date = new Date(utcTimestamp);
+      if (Number.isNaN(date.getTime())) return;
+      element.title = utcTimestamp;
+      element.textContent = localDateFormatter.format(date);
+    });
+
     const search = document.getElementById('search');
     const selector = document.getElementById('tableFilter');
     const apply = () => {

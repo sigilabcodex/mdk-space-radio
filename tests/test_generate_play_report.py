@@ -103,14 +103,46 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(len(stats["never_played"]), 4)
         self.assertEqual(len(stats["album_ranking"]), 2)
 
-    def test_unicode_and_html_escaping(self):
-        self.add("one", "A-1", 0)
-        stats = report.collect_statistics(self.connection, "2026-01-02T00:00:00Z")
-        rendered = report.render_html(
+    def test_empty_html_has_clear_fallback_without_never(self):
+        empty_connection = recorder.connect_database(self.root / "empty-report.sqlite3")
+        self.addCleanup(empty_connection.close)
+        stats = report.collect_statistics(empty_connection, "2026-01-02T00:00:00Z")
+        rendered = self.render(stats)
+        self.assertIn("Tracking will begin with the first recorded play.", rendered)
+        self.assertIn("No playback events have been recorded yet.", rendered)
+        self.assertIn("No plays recorded yet.", rendered)
+        self.assertNotIn("Tracking begins at Never", rendered)
+        self.assertNotIn("Period end: Never", rendered)
+        self.assertIn('<time class="local-time" datetime="2026-01-02T00:00:00Z">', rendered)
+
+    def render(self, stats):
+        return report.render_html(
             stats,
             (ROOT / "web/stats/index.template.html").read_text(encoding="utf-8"),
             (ROOT / "web/stats/stats.css").read_text(encoding="utf-8"),
         )
+
+    def test_local_time_markup_and_javascript_with_utc_fallback(self):
+        self.add("one", "A-1", 0)
+        stats = report.collect_statistics(self.connection, "2026-01-02T00:00:00Z")
+        rendered = self.render(stats)
+        marker = '<time class="local-time" datetime="2026-01-01T00:00:00Z">'
+        self.assertGreaterEqual(rendered.count(marker), 5)
+        self.assertIn("2026-01-01T00:00:00Z UTC</time>", rendered)
+        self.assertIn("new Intl.DateTimeFormat(undefined", rendered)
+        self.assertIn("element.title = utcTimestamp", rendered)
+        self.assertIn("without JavaScript", rendered)
+
+    def test_timestamp_markup_escapes_attribute_and_fallback(self):
+        rendered = report.format_timestamp('2026-01-01T00:00:00Z\"<unsafe>')
+        self.assertIn('datetime="2026-01-01T00:00:00Z&quot;', rendered)
+        self.assertNotIn('<unsafe>', rendered)
+        self.assertIn('&lt;unsafe&gt;', rendered)
+
+    def test_unicode_and_html_escaping(self):
+        self.add("one", "A-1", 0)
+        stats = report.collect_statistics(self.connection, "2026-01-02T00:00:00Z")
+        rendered = self.render(stats)
         self.assertIn("Café", rendered)
         self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", rendered)
         self.assertNotIn("<script>alert(1)</script>", rendered)

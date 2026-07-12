@@ -149,7 +149,11 @@ def collect_statistics(connection, generated_at=None):
 
 
 def format_timestamp(value):
-    return html.escape(value or "Never")
+    if not value:
+        return "—"
+    exact = html.escape(str(value), quote=True)
+    fallback = html.escape(f"{value} UTC")
+    return f'<time class="local-time" datetime="{exact}">{fallback}</time>'
 
 
 def format_duration(seconds):
@@ -211,7 +215,7 @@ def recent_table(rows):
             f'<td>{html.escape(str(row.get("track_title") or ""))}</td>'
             f'<td>{html.escape(str(row.get("release_id") or ""))}</td></tr>'
         )
-    return ('<table id="recent"><thead><tr><th>Started UTC</th><th>Track ID</th>'
+    return ('<table id="recent"><thead><tr><th>Started</th><th>Track ID</th>'
             '<th>Track</th><th>Album</th></tr></thead><tbody>' + "".join(body) + "</tbody></table>")
 
 
@@ -219,18 +223,39 @@ def render_html(stats, template_text, css_text):
     summary = stats["summary"]
     repeats = stats["near_album_repetitions"]
     last = stats["last_play"]
+    generated_at = format_timestamp(stats["generated_at"])
+    if last is None:
+        tracking_status = (
+            '<p class="notice">Tracking will begin with the first recorded play.</p>'
+        )
+        period_status = (
+            f'<p>No playback events have been recorded yet. · Updated: {generated_at}</p>'
+        )
+        last_play = "No plays recorded yet."
+    else:
+        tracking_status = (
+            '<p class="notice">Tracking begins at '
+            f'<strong>{format_timestamp(stats["period"]["start"])}</strong>. '
+            'Earlier broadcasts are not included.</p>'
+        )
+        period_status = (
+            f'<p>Period end: {format_timestamp(stats["period"]["end"])} · '
+            f'Updated: {generated_at}</p>'
+        )
+        last_play = (
+            f'{html.escape(last["track_title"])} · '
+            f'{format_timestamp(last["started_at"])}'
+        )
     values = {
         "css": css_text,
-        "generated_at": html.escape(stats["generated_at"]),
-        "tracking_start": format_timestamp(stats["period"]["start"]),
-        "period_end": format_timestamp(stats["period"]["end"]),
+        "tracking_status": tracking_status,
+        "period_status": period_status,
         "total_plays": str(summary["total_plays"]),
         "unique_tracks": str(summary["unique_tracks_played"]),
         "unique_albums": str(summary["unique_albums_played"]),
         "catalog_tracks": str(summary["catalog_tracks"]),
         "catalog_albums": str(summary["catalog_albums"]),
-        "last_play": ("No plays recorded" if last is None else
-                      f'{html.escape(last["track_title"])} · {html.escape(last["started_at"])}'),
+        "last_play": last_play,
         "repeat_3": str(repeats["3"]["count"]),
         "repeat_5": str(repeats["5"]["count"]),
         "repeat_10": str(repeats["10"]["count"]),
