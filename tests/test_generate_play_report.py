@@ -1,6 +1,7 @@
 import importlib.util
 import json
 import sqlite3
+import stat
 import tempfile
 import unittest
 from pathlib import Path
@@ -128,6 +129,8 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(stats["summary"]["total_plays"], 1)
         self.assertEqual(json.loads(json_output.read_text())["summary"]["total_plays"], 1)
         self.assertIn("<!doctype html>", html_output.read_text())
+        self.assertEqual(stat.S_IMODE(html_output.stat().st_mode), 0o644)
+        self.assertEqual(stat.S_IMODE(json_output.stat().st_mode), 0o644)
         destinations = [Path(call.args[1]) for call in replace.call_args_list]
         self.assertEqual(destinations, [json_output, html_output])
         self.assertTrue(all(source.parent == destination.parent

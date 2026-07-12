@@ -254,6 +254,7 @@ def atomic_write(path, content):
             handle.write(content)
             handle.flush()
             os.fsync(handle.fileno())
+            os.chmod(handle.name, 0o644)
         os.replace(handle.name, path)
     except Exception:
         Path(handle.name).unlink(missing_ok=True)
