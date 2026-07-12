@@ -17,6 +17,7 @@
     const logLine = document.getElementById('logLine');
     const liveText = document.getElementById('liveText');
     const localClock = document.getElementById('localClock');
+    const broadcastStartOverlay = document.getElementById('broadcastStartOverlay');
     const welcomeModal = document.getElementById('welcomeModal');
     const welcomeCloseBtn = document.getElementById('welcomeCloseBtn');
     const welcomeEnterRadio = document.getElementById('welcomeEnterRadio');
@@ -91,6 +92,29 @@
       // Future broadcast feature/immersive state transitions connect here.
       // The timing inputs are data.track_elapsed_seconds,
       // data.track_remaining_seconds and data.track_duration_seconds.
+    }
+
+    async function initBroadcastPlayback() {
+      if (!isBroadcastView) return;
+
+      if (await window.ViewProfile.tryAutoplay(radio)) {
+        broadcastStartOverlay.hidden = true;
+        return;
+      }
+
+      broadcastStartOverlay.hidden = false;
+
+      const resumeBroadcast = async (event) => {
+        if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) return;
+        if (!await window.ViewProfile.tryAutoplay(radio)) return;
+
+        broadcastStartOverlay.hidden = true;
+        window.removeEventListener('pointerdown', resumeBroadcast);
+        window.removeEventListener('keydown', resumeBroadcast);
+      };
+
+      window.addEventListener('pointerdown', resumeBroadcast);
+      window.addEventListener('keydown', resumeBroadcast);
     }
 
     function loadScript(src) {
@@ -325,7 +349,7 @@
       document.body.classList.toggle('view-focus', mode === 'focus');
       updateViewModeButtons(mode);
 
-      if (mode === 'radio' || mode === 'immersive') {
+      if ((mode === 'radio' || mode === 'immersive') && (!isBroadcastView || !radio.paused)) {
         startButterchurn();
       } else {
         stopButterchurn();
@@ -718,7 +742,7 @@
 
         renderTrackLinks(data);
 
-        liveText.textContent = `LIVE · ${data.listeners ?? 0} listener${data.listeners === 1 ? '' : 's'}`;
+        liveText.textContent = `Live Connections · ${data.listeners ?? 0}`;
         statusLine.textContent = `status live · ${data.bitrate || 160} kbps · ${data.source_format || 'mp3'}`;
         syncDeepImmersiveMini(data);
         renderTransmissionLog(data);
@@ -744,6 +768,7 @@
       playBtn.textContent = 'Mute';
       playBtn.setAttribute('aria-label', 'Mute stream');
       startSpectrum();
+      if (currentViewMode !== 'focus') startButterchurn();
     });
 
     radio.addEventListener('pause', () => {
@@ -823,6 +848,7 @@
 
     setViewMode('radio');
     if (!isBroadcastView) initWelcomeModal();
+    initBroadcastPlayback();
     updateLocalClock();
     loadNowPlaying();
     setInterval(loadNowPlaying, 10000);

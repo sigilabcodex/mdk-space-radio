@@ -51,6 +51,13 @@
     </section>
   </div>
 
+  <div id="broadcastStartOverlay" class="broadcast-start-overlay" role="status" aria-live="polite" hidden>
+    <div class="broadcast-start-panel">
+      <strong>Transmission standby</strong>
+      <span>Click anywhere to engage audio</span>
+    </div>
+  </div>
+
   <div class="shell">
     <main class="terminal">
       <header class="topbar">
@@ -119,12 +126,18 @@
                 <span class="broadcast-listen-url">radio.mdkband.com</span>
                 <span class="broadcast-listen-sub">MDK Space Radio · 24/7 experimental transmission</span>
               </div>
+
+              <div class="broadcast-system-widgets" aria-hidden="true">
+                <span class="system-widget system-widget-carrier"><b>Carrier</b><i></i><em>locked</em></span>
+                <span class="system-widget system-widget-drift"><b>Drift</b><i></i><em>± 0.02</em></span>
+                <span class="system-widget system-widget-deck"><b>Deck</b><i></i><em>online</em></span>
+              </div>
             </div>
           </article>
 
           <section class="about-card" aria-label="About MDK">
             <div class="label">About MDK</div>
-            <p>MDK is Mik Schuppin, Diego Madero &amp; Kai Kraatz — three humans improvising electronic music remotely between Germany and Mexico.</p>
+            <p>MDK is Mik Schuppin, Diego Madero &amp; Kai Kraatz — three humans creating, performing and hand-crafting experimental electronic music across Germany and Mexico.</p>
             <div class="about-links">
               <a class="link-btn" href="https://mdkband.com/" target="_blank" rel="noopener">Website</a>
               <a class="link-btn" href="https://www.youtube.com/@mdklabs" target="_blank" rel="noopener">YouTube</a>
@@ -146,7 +159,6 @@
               <div class="telemetry-bars" aria-hidden="true">
                 <span></span><span></span><span></span><span></span>
               </div>
-              <div class="label">live spectrum</div>
             </div>
 
             <div class="box log">
@@ -160,7 +172,7 @@
       <footer class="footer">
         <span id="statusLine">status: acquiring signal</span>
         <span title="Music by MDK: Mik Schuppin, Diego Madero & Kai Kraatz">music by MDK · <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener" aria-label="Creative Commons Attribution 3.0 License">CC BY 3.0</a></span>
-        <span><a href="https://mdkband.com/" target="_blank" rel="noopener">mdkband.com</a></span>
+        <span class="official-site"><a href="https://mdkband.com/" target="_blank" rel="noopener noreferrer">mdkband.com</a></span>
       </footer>
 
       <button id="deepImmersiveBtn" class="deep-immersive-toggle" type="button" aria-pressed="false" aria-label="Toggle deep immersive mode">Deep</button>

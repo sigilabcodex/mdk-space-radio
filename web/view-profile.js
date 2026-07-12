@@ -17,5 +17,14 @@
     return profile;
   }
 
-  return { applyViewProfile, getViewProfile };
+  async function tryAutoplay(media) {
+    try {
+      await media.play();
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  return { applyViewProfile, getViewProfile, tryAutoplay };
 }));
