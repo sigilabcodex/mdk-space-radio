@@ -8,6 +8,7 @@
     const elapsed = document.getElementById('elapsed');
     const duration = document.getElementById('duration');
     const progressBar = document.getElementById('progressBar');
+    const primaryTrackLink = document.getElementById('primaryTrackLink');
     const archiveLink = document.getElementById('archiveLink');
     const bandcampLink = document.getElementById('bandcampLink');
     const statusLine = document.getElementById('statusLine');
@@ -59,6 +60,28 @@
     let pendingPresetTrackKey = null;
 
     radio.volume = Number(volume.value);
+
+    function renderTrackLinks(data) {
+      const cta = window.NowPlayingCta.selectNowPlayingCta(data);
+      const archiveUrl = window.NowPlayingCta.usableUrl(data.archive_item_url)
+        || window.NowPlayingCta.usableUrl(data.archive_details_url);
+      const bandcampUrl = window.NowPlayingCta.usableUrl(data.bandcamp_url);
+
+      primaryTrackLink.hidden = !cta;
+      if (cta) {
+        primaryTrackLink.href = cta.url;
+        primaryTrackLink.textContent = cta.label;
+      } else {
+        primaryTrackLink.removeAttribute('href');
+        primaryTrackLink.textContent = '';
+      }
+
+      archiveLink.hidden = !archiveUrl || (cta && archiveUrl === cta.url);
+      if (archiveUrl) archiveLink.href = archiveUrl;
+
+      bandcampLink.hidden = !bandcampUrl || (cta && bandcampUrl === cta.url);
+      if (bandcampUrl) bandcampLink.href = bandcampUrl;
+    }
 
     function loadScript(src) {
       return new Promise((resolve, reject) => {
@@ -682,19 +705,7 @@
           cover.style.display = '';
         }
 
-        if (data.archive_details_url) {
-          archiveLink.href = data.archive_details_url;
-          archiveLink.style.display = '';
-        } else {
-          archiveLink.style.display = 'none';
-        }
-
-        if (data.bandcamp_url) {
-          bandcampLink.href = data.bandcamp_url;
-          bandcampLink.style.display = '';
-        } else {
-          bandcampLink.style.display = 'none';
-        }
+        renderTrackLinks(data);
 
         liveText.textContent = `LIVE · ${data.listeners ?? 0} listener${data.listeners === 1 ? '' : 's'}`;
         statusLine.textContent = `status live · ${data.bitrate || 160} kbps · ${data.source_format || 'mp3'}`;

@@ -99,8 +99,9 @@
               </div>
 
               <div class="controls track-links">
-                <a id="archiveLink" class="link-btn" href="#" target="_blank" rel="noopener">Archive</a>
-                <a id="bandcampLink" class="link-btn" href="#" target="_blank" rel="noopener">Bandcamp</a>
+                <a id="primaryTrackLink" class="link-btn link-btn-primary" href="#" target="_blank" rel="noopener noreferrer" hidden></a>
+                <a id="archiveLink" class="link-btn" href="#" target="_blank" rel="noopener noreferrer">Archive</a>
+                <a id="bandcampLink" class="link-btn" href="#" target="_blank" rel="noopener noreferrer">Bandcamp</a>
                 <a class="link-btn" href="/stream.mp3">Direct stream</a>
                 <a class="link-btn" href="/listen.m3u" download>M3U</a>
                 <a class="link-btn" href="/listen.pls" download>PLS</a>
@@ -172,6 +173,7 @@
 
   <audio id="radio" preload="none" crossorigin="anonymous" src="/stream.mp3"></audio>
 
+  <script src="now-playing-cta.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
