@@ -67,9 +67,10 @@ class GenerateM3UTest(unittest.TestCase):
         self.assertEqual(item["source_format"], "mp3")
         self.assertEqual(metadata["IA FLAC | rel-1: Release"]["source_format"], "flac")
         self.assertNotIn("Hidden | hidden: Release", metadata)
+        self.assertNotIn("track_id=", playlist)
 
     def test_v1_metadata_stream_preference_and_track_id(self):
-        count, _, metadata, _ = self.run_manifest({
+        count, playlist, metadata, _ = self.run_manifest({
             "schema_version": "1.0", "releases": [release()], "tracks": [track()]
         })
         self.assertEqual(count, 1)
@@ -81,6 +82,24 @@ class GenerateM3UTest(unittest.TestCase):
         self.assertEqual(item["release_date"], "2026-01-02")
         self.assertEqual(item["cover_url"], "https://example.test/cover.jpg")
         self.assertEqual(item["bandcamp_url"], "https://mdk.test/album/release")
+        self.assertIn('track_id="track-1"', playlist)
+        self.assertIn('release_id="rel-1"', playlist)
+        self.assertIn('source_url="https://audio.test/track.mp3"', playlist)
+
+    def test_v1_annotate_history_metadata_is_liquidsoap_escaped(self):
+        _, playlist, _, _ = self.run_manifest({
+            "schema_version": "1.0", "releases": [release(release_id='rel"\\one')],
+            "tracks": [track(track_id='track"\\one', release_id='rel"\\one')],
+        })
+        self.assertIn('track_id="track\\"\\\\one"', playlist)
+        self.assertIn('release_id="rel\\"\\\\one"', playlist)
+
+    def test_v1_requires_track_id_even_when_not_radio_ready(self):
+        with self.assertRaisesRegex(ValueError, "non-empty track_id"):
+            generate_m3u.build_outputs({
+                "schema_version": "1.0", "releases": [release()],
+                "tracks": [track(track_id=None, radio_ready=False)],
+            })
 
     def test_unique_display_is_unchanged(self):
         _, playlist, metadata, _ = self.run_manifest({

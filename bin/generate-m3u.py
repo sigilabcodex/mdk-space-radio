@@ -76,14 +76,19 @@ def metadata_entry(release, track, url, source_format, archive_url, track_id=Non
 
 
 def annotated_line(display, entry):
-    return (
-        'annotate:'
-        f'title="{liq_escape(display)}",'
-        f'artist="{liq_escape(entry["artist"])}",'
-        f'album="{liq_escape(entry["release_title"])}",'
-        f'comment="{liq_escape(entry.get("archive_item_url") or entry.get("archive_details_url") or "")}"'
-        f':{entry["source_url"]}'
-    )
+    fields = [
+        f'title="{liq_escape(display)}"',
+        f'artist="{liq_escape(entry["artist"])}"',
+        f'album="{liq_escape(entry["release_title"])}"',
+        f'comment="{liq_escape(entry.get("archive_item_url") or entry.get("archive_details_url") or "")}"',
+    ]
+    if "track_id" in entry:
+        fields.extend((
+            f'track_id="{liq_escape(entry["track_id"])}"',
+            f'release_id="{liq_escape(entry["release_id"])}"',
+            f'source_url="{liq_escape(entry["source_url"])}"',
+        ))
+    return f'annotate:{",".join(fields)}:{entry["source_url"]}'
 
 
 def add_item(items, nowplaying, release, track, url, source_format, archive_url,
@@ -135,15 +140,20 @@ def build_v1(data):
             raise ValueError(f"Duplicate release_id: {release_id!r}")
         releases[release_id] = release
 
+    tracks = data.get("tracks", [])
     seen_track_ids = set()
-    for track in data.get("tracks", []):
+    for track in tracks:
+        track_id = track.get("track_id")
+        if not isinstance(track_id, str) or not track_id.strip():
+            raise ValueError("Every schema 1.0 track must have a non-empty track_id")
+        if track_id in seen_track_ids:
+            raise ValueError(f"Duplicate track_id: {track_id!r}")
+        seen_track_ids.add(track_id)
+
+    for track in tracks:
         if track.get("radio_ready") is not True:
             continue
-        track_id = track.get("track_id")
-        if track_id is not None:
-            if track_id in seen_track_ids:
-                raise ValueError(f"Duplicate track_id: {track_id!r}")
-            seen_track_ids.add(track_id)
+        track_id = track["track_id"]
         release_id = track.get("release_id")
         if release_id not in releases:
             raise ValueError(

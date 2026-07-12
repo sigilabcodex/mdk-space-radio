@@ -1,0 +1,13 @@
+[Unit]
+Description=Consume MDK Space Radio play-history spool
+ConditionPathExists=/opt/swr-radio/data/radio-manifest.json
+ConditionPathExists=/opt/swr-radio/data/play-history.sqlite3
+
+[Service]
+Type=oneshot
+User=diego
+Group=diego
+WorkingDirectory=/opt/swr-radio
+UMask=0027
+NoNewPrivileges=true
+ExecStart=/opt/swr-radio/bin/record-play-history.py --database /opt/swr-radio/data/play-history.sqlite3 --manifest /opt/swr-radio/data/radio-manifest.json --spool-dir /opt/swr-radio/cache/play-history-spool --consume-spool
