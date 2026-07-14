@@ -320,7 +320,7 @@
       if (!mediaSource) {
         mediaSource = audioContext.createMediaElementSource(radio);
         analyser = audioContext.createAnalyser();
-        analyser.fftSize = 256;
+        analyser.fftSize = 4096;
         analyser.smoothingTimeConstant = 0.82;
         spectrumData = new Uint8Array(analyser.frequencyBinCount);
         mediaSource.connect(analyser);
@@ -420,12 +420,13 @@
       const width = spectrum.width;
       const height = spectrum.height;
       const dpr = window.devicePixelRatio || 1;
-      const barCount = 34;
+      const barCount = 48;
       const gap = Math.max(2, Math.floor(3 * dpr));
       const cellWidth = width / barCount;
       const barWidth = Math.max(4 * dpr, cellWidth - gap);
-      const minBin = 2;
-      const maxBin = Math.max(minBin + 1, Math.floor(spectrumData.length * 0.76));
+      const nyquist = audioContext.sampleRate / 2;
+      const minBin = Math.max(1, Math.floor((10 / nyquist) * spectrumData.length));
+      const maxBin = Math.min(spectrumData.length - 1, Math.ceil((20000 / nyquist) * spectrumData.length));
       const noiseFloor = 18;
       const verticalHeadroom = 0.88;
 
@@ -746,6 +747,7 @@
         statusLine.textContent = `status live · ${data.bitrate || 160} kbps · ${data.source_format || 'mp3'}`;
         syncDeepImmersiveMini(data);
         renderTransmissionLog(data);
+        window.UIWidgets.syncTelemetry(data);
         maybeRotateButterchurnPreset(data);
 
         updateProgress();

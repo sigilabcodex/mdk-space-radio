@@ -155,15 +155,47 @@
                   <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
                   <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
                 </div>
+                <div class="frequency-scale" aria-hidden="true">
+                  <span>10</span><span>50</span><span>200</span><span>1k</span><span>5k</span><span>10k</span><span>20k Hz</span>
+                </div>
               </div>
-              <div class="telemetry-bars" aria-hidden="true">
-                <span></span><span></span><span></span><span></span>
+              <div class="telemetry-instruments" aria-label="Derived transmission telemetry">
+                <section class="telemetry-module orbit-module">
+                  <header><span>orbital acquisition</span><b data-telemetry-release>MDK</b></header>
+                  <svg viewBox="0 0 180 86" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                    <defs><linearGradient id="orbit-glow" x1="0" x2="1"><stop stop-color="#65ffc4"/><stop offset="1" stop-color="#ffd078"/></linearGradient></defs>
+                    <g class="orbit-grid"><ellipse cx="88" cy="43" rx="71" ry="27"/><ellipse cx="88" cy="43" rx="48" ry="18"/><path d="M7 43H169M88 5V81M28 18L148 68M29 68L148 18"/></g>
+                    <path class="orbit-path" d="M20 58C42 8 133 8 160 53C139 82 51 82 20 58Z"/>
+                    <g class="orbit-satellite"><circle cx="0" cy="0" r="3"/><path d="M-8 0H8M0-6V6"/></g><circle class="orbit-core" cx="88" cy="43" r="7"/>
+                  </svg>
+                  <footer><span data-telemetry-az>AZ --</span><span data-telemetry-el>EL --</span><strong>DERIVED</strong></footer>
+                </section>
+                <section class="telemetry-module carrier-module">
+                  <header><span>carrier integrity</span><b data-telemetry-channel>CH–--</b></header>
+                  <div class="carrier-readout"><strong data-telemetry-lock>--.-</strong><small>derived lock</small></div>
+                  <div class="carrier-rail"><i></i><em></em></div>
+                  <div class="carrier-meta"><span>LIVE<br><b data-telemetry-listeners>0</b></span><span>PROG<br><b data-telemetry-progress>0.0%</b></span><span>TRACK<br><b data-telemetry-channel>CH–--</b></span></div>
+                </section>
+                <section class="telemetry-module matrix-module">
+                  <header><span>channel matrix</span><b data-telemetry-channel>CH–--</b></header>
+                  <div class="telemetry-matrix" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                  <footer><span data-telemetry-matrix-progress>PROG 0.0%</span><span data-telemetry-matrix-live>LIVE 0</span><strong>DERIVED</strong></footer>
+                </section>
               </div>
             </div>
 
             <div class="box log">
               <div class="label">Transmission log</div>
               <p id="logLine">Waiting for MDK Space Radio telemetry…</p>
+              <section class="relay-terminal" aria-label="Relay terminal">
+                <header><span>relay terminal / passive</span><b data-relay-node>TRACK --</b></header>
+                <div class="relay-terminal-lines">
+                  <span><i data-relay-time>--:--:--</i><em>archive.sync</em><b data-relay-release>awaiting metadata</b></span>
+                  <span><i data-relay-time>--:--:--</i><em>signal.queue</em><b data-relay-track>awaiting signal</b></span>
+                  <span><i data-relay-time>--:--:--</i><em>stream.progress</em><b data-relay-progress>0.0% complete</b></span>
+                </div>
+                <footer><span>RX LISTEN</span><i></i><b>metadata-derived status_</b></footer>
+              </section>
             </div>
           </section>
         </section>
@@ -171,6 +203,7 @@
 
       <footer class="footer">
         <span id="statusLine">status: acquiring signal</span>
+        <span class="app-version">MDK Space Radio v3.5</span>
         <span title="Music by MDK: Mik Schuppin, Diego Madero & Kai Kraatz">music by MDK · <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener" aria-label="Creative Commons Attribution 3.0 License">CC BY 3.0</a></span>
         <span class="official-site"><a href="https://mdkband.com/" target="_blank" rel="noopener noreferrer">mdkband.com</a></span>
       </footer>
@@ -193,6 +226,7 @@
 
   <script src="view-profile.js"></script>
   <script src="now-playing-cta.js"></script>
+  <script src="ui-widgets.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

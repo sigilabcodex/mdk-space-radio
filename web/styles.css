@@ -2127,3 +2127,113 @@
         opacity: 0.62;
       }
     }
+
+    /* Canonical UI widgets: full-band monitor, derived telemetry and relay. */
+    :root {
+      --widget-green: #75ffc2;
+      --widget-amber: #ffd078;
+    }
+
+    .shell { padding-block: 16px; }
+    .topbar { padding: 16px 20px; }
+    .content { padding: 18px 20px; }
+    .main-panel { max-width: 1050px; gap: 12px; }
+    .now-card { grid-template-columns: minmax(230px, 292px) minmax(0, 1fr); gap: 20px; padding: 16px; }
+    .meta { gap: 9px; }
+    .progress-wrap, .controls { margin-top: 2px; }
+    .now-card, .box, .about-card { border-radius: 11px; border-color: rgba(117,255,194,0.18); }
+    .link-btn-primary { border-color: rgba(117,255,194,0.30); background: rgba(117,255,194,0.065); color: rgba(190,255,218,0.88); font-weight: inherit; }
+    .link-btn-primary:hover, .link-btn-primary:focus-visible { border-color: rgba(117,255,194,0.55); box-shadow: 0 0 14px rgba(117,255,194,0.09); }
+    .about-card { grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px 14px; padding: 10px 14px; }
+    .about-card p { font-size: 0.82rem; line-height: 1.38; }
+    .about-links { flex-wrap: nowrap; }
+    .about-links .link-btn { padding: 7px 9px; }
+    .subgrid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; align-items: stretch; }
+    .box { min-height: 0; }
+
+    .monitor {
+      position: relative;
+      display: grid;
+      grid-template-rows: auto 108px auto;
+      gap: 9px;
+      padding: 15px 16px;
+      background: radial-gradient(ellipse at 15% 0%, rgba(117,255,194,0.07), transparent 45%), rgba(0,0,0,0.28);
+    }
+    .monitor::after { content: "RF SPECTRAL ARRAY / FULL BAND"; position: absolute; top: 14px; right: 16px; color: rgba(158,213,186,0.42); font: 0.48rem/1 var(--mono); letter-spacing: 0.12em; }
+    .spectrum-wrap { height: 108px; border-radius: 4px; border-color: rgba(117,255,194,0.32); background: linear-gradient(rgba(117,255,194,0.075) 1px, transparent 1px), linear-gradient(90deg, rgba(117,255,194,0.055) 1px, transparent 1px), radial-gradient(ellipse at 50% 110%, rgba(117,255,194,0.12), transparent 70%), #010604; background-size: 100% 16px, 32px 100%, auto, auto; }
+    .spectrum-wrap::before { opacity: 0.20; background: repeating-linear-gradient(to bottom, rgba(255,255,255,0.035) 0 1px, transparent 1px 4px); }
+    .spectrum-wrap::after { border-radius: 3px; box-shadow: inset 0 0 24px rgba(117,255,194,0.10), inset 0 0 50px rgba(0,0,0,0.5); }
+    #spectrum { box-sizing: border-box; padding: 12px 15px 21px; }
+    .bars { inset: 13px 15px 22px; }
+    .frequency-scale { position: absolute; z-index: 4; right: 14px; bottom: 5px; left: 14px; display: flex; justify-content: space-between; color: rgba(174,229,201,0.48); font: 0.46rem/1 var(--mono); letter-spacing: 0.03em; pointer-events: none; }
+    .telemetry-bars { display: none; }
+
+    .telemetry-instruments { display: grid; grid-template-columns: 1.45fr 0.9fr 0.95fr; gap: 8px; min-height: 86px; perspective: 700px; }
+    .telemetry-module { position: relative; min-width: 0; overflow: hidden; border: 1px solid rgba(117,255,194,0.20); border-radius: 3px; background: linear-gradient(145deg, rgba(255,255,255,0.035), transparent 32%), linear-gradient(90deg, rgba(117,255,194,0.025) 1px, transparent 1px), #020906; background-size: auto, 12px 100%, auto; box-shadow: inset 0 0 24px rgba(0,0,0,0.62), 0 7px 16px rgba(0,0,0,0.18); transform: rotateX(0.8deg); }
+    .telemetry-module::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(105deg, transparent 0 42%, rgba(255,255,255,0.035) 48%, transparent 55%); }
+    .telemetry-module header, .telemetry-module footer { position: relative; z-index: 3; display: flex; align-items: center; justify-content: space-between; padding: 5px 7px; color: rgba(169,220,195,0.52); font: 0.44rem/1 var(--mono); letter-spacing: 0.10em; text-transform: uppercase; }
+    .telemetry-module header { border-bottom: 1px solid rgba(117,255,194,0.11); }
+    .telemetry-module header b, .telemetry-module footer strong { color: rgba(117,255,194,0.70); font-weight: 600; }
+    .orbit-module svg { display: block; width: 100%; height: 54px; margin: -1px 0; filter: drop-shadow(0 0 4px rgba(117,255,194,0.12)); }
+    .orbit-grid, .orbit-path, .orbit-satellite { fill: none; vector-effect: non-scaling-stroke; }
+    .orbit-grid { stroke: rgba(117,255,194,0.15); stroke-width: 0.65; }
+    .orbit-path { stroke: url(#orbit-glow); stroke-width: 1.15; stroke-dasharray: 5 3; }
+    .orbit-core { fill: rgba(117,255,194,0.14); stroke: rgba(117,255,194,0.8); animation: widget-core-pulse 4.5s ease-in-out infinite; }
+    .orbit-satellite { stroke: var(--widget-amber); transform-origin: 88px 43px; animation: widget-orbit 16s linear infinite; filter: drop-shadow(0 0 3px rgba(255,208,120,0.55)); }
+    .carrier-readout { display: flex; align-items: baseline; gap: 5px; padding: 8px 8px 4px; }
+    .carrier-readout strong { color: var(--widget-green); font: 1.28rem/1 var(--mono); letter-spacing: -0.05em; text-shadow: 0 0 9px rgba(117,255,194,0.32); }
+    .carrier-readout small, .carrier-meta { color: rgba(169,220,195,0.42); font: 0.43rem/1 var(--mono); text-transform: uppercase; }
+    .carrier-rail { position: relative; display: block; height: 7px; margin: 0 8px 7px; border: 1px solid rgba(117,255,194,0.18); background: repeating-linear-gradient(90deg, rgba(117,255,194,0.08) 0 6px, transparent 6px 8px); }
+    .carrier-rail i { display: block; width: 79%; height: 100%; background: linear-gradient(90deg, var(--widget-green), var(--widget-amber)); animation: widget-carrier 6s ease-in-out infinite alternate; }
+    .carrier-rail em { position: absolute; top: -3px; left: 74%; width: 1px; height: 11px; background: #fff8d5; box-shadow: 0 0 6px var(--widget-amber); }
+    .carrier-meta { display: grid; grid-template-columns: repeat(3, 1fr); padding: 0 7px; font-size: 0.40rem; line-height: 1.35; letter-spacing: 0.06em; }
+    .carrier-meta b { color: rgba(117,255,194,0.72); font-weight: 500; }
+    .telemetry-matrix { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; padding: 10px 8px 8px; }
+    .telemetry-matrix i { height: 15px; border: 1px solid rgba(117,255,194,0.18); background: rgba(117,255,194,0.055); box-shadow: inset 0 0 6px rgba(0,0,0,0.55); }
+    .telemetry-matrix i:nth-child(2), .telemetry-matrix i:nth-child(5), .telemetry-matrix i:nth-child(7), .telemetry-matrix i:nth-child(10), .telemetry-matrix i:nth-child(12) { background: rgba(117,255,194,0.62); box-shadow: 0 0 7px rgba(117,255,194,0.28), inset 0 0 5px rgba(255,255,255,0.14); }
+    .telemetry-matrix i:nth-child(5), .telemetry-matrix i:nth-child(10) { background: rgba(255,208,120,0.68); }
+
+    .log { display: grid; grid-template-rows: auto minmax(58px, auto) minmax(72px, 1fr); gap: 9px; padding: 15px 16px; overflow: hidden; }
+    #logLine { align-self: start; min-height: 0; }
+    .relay-terminal { position: relative; align-self: end; min-height: 72px; overflow: hidden; border: 1px solid rgba(117,255,194,0.13); border-radius: 3px; background: linear-gradient(rgba(117,255,194,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(117,255,194,0.025) 1px, transparent 1px), rgba(0,7,5,0.55); background-size: 100% 12px, 18px 100%, auto; box-shadow: inset 0 0 18px rgba(0,0,0,0.58); color: rgba(159,209,184,0.46); font: 0.50rem/1.25 var(--mono); letter-spacing: 0.04em; }
+    .relay-terminal::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(to bottom, rgba(255,255,255,0.018) 0 1px, transparent 1px 3px); }
+    .relay-terminal header, .relay-terminal footer { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 4px 6px; text-transform: uppercase; letter-spacing: 0.10em; }
+    .relay-terminal header { border-bottom: 1px solid rgba(117,255,194,0.09); color: rgba(171,218,194,0.50); }
+    .relay-terminal header b { color: rgba(117,255,194,0.62); font-weight: 500; }
+    .relay-terminal-lines { position: relative; z-index: 2; display: grid; gap: 2px; padding: 5px 6px 3px; }
+    .relay-terminal-lines span { display: grid; grid-template-columns: 5.8em 9.6em minmax(0, 1fr); gap: 5px; white-space: nowrap; }
+    .relay-terminal-lines i, .relay-terminal-lines em, .relay-terminal-lines b { overflow: hidden; font-style: normal; text-overflow: ellipsis; }
+    .relay-terminal-lines i { color: rgba(255,208,120,0.48); }.relay-terminal-lines em { color: rgba(117,255,194,0.50); }.relay-terminal-lines b { color: rgba(181,220,200,0.46); font-weight: 400; }
+    .relay-terminal footer { justify-content: start; gap: 7px; padding-top: 2px; color: rgba(117,255,194,0.42); }
+    .relay-terminal footer i { width: 4px; height: 4px; border-radius: 50%; background: rgba(117,255,194,0.72); box-shadow: 0 0 5px rgba(117,255,194,0.38); animation: relay-listen 3.8s steps(2, end) infinite; }
+    .relay-terminal footer b { color: rgba(151,194,173,0.34); font-weight: 400; letter-spacing: 0.04em; text-transform: none; }
+    .app-version { color: rgba(172, 219, 196, 0.48); font: 0.62rem/1 var(--mono); letter-spacing: 0.06em; white-space: nowrap; }
+
+    body.view-radio:not(.broadcast-view) #cover { cursor: zoom-in; }
+    .cover-lightbox { width: min(92vw, 980px); max-width: 980px; max-height: 92vh; margin: auto; padding: 0; border: 1px solid rgba(117,255,194,0.28); border-radius: 8px; background: rgba(2,8,6,0.96); color: #edf5ef; box-shadow: 0 28px 100px rgba(0,0,0,0.74), 0 0 36px rgba(117,255,194,0.08); }
+    .cover-lightbox::backdrop { background: rgba(0,4,3,0.84); backdrop-filter: blur(3px); }
+    .lightbox-panel { position: relative; display: grid; place-items: center; min-height: min(72vh, 760px); padding: 34px; background: linear-gradient(90deg, rgba(117,255,194,0.035) 1px, transparent 1px), linear-gradient(rgba(117,255,194,0.028) 1px, transparent 1px), rgba(1,7,5,0.78); background-size: 32px 100%, 100% 32px, auto; }
+    .lightbox-title { position: absolute; top: 12px; left: 14px; color: rgba(181,226,204,0.60); font: 0.60rem/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; }
+    .lightbox-close { position: absolute; top: 9px; right: 10px; z-index: 2; border: 1px solid rgba(117,255,194,0.28); border-radius: 4px; padding: 7px 9px; background: rgba(3,12,8,0.85); color: rgba(202,244,221,0.88); font: 0.62rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
+    .lightbox-image { display: block; max-width: 100%; max-height: min(76vh, 840px); object-fit: contain; box-shadow: 0 16px 50px rgba(0,0,0,0.5); }
+
+    body.view-focus .telemetry-instruments, body.view-focus .frequency-scale, body.view-focus .monitor::after, body.view-focus .relay-terminal { display: none; }
+    body.view-focus .monitor { min-height: 142px; grid-template-rows: auto 78px 30px; padding: 16px; background: rgba(0,0,0,0.22); }
+    body.view-focus .spectrum-wrap { height: 78px; }
+    body.view-focus .telemetry-bars { display: grid; }
+    body.view-focus .log { display: block; min-height: 142px; padding: 16px; }
+    body.view-immersive .telemetry-instruments, body.view-immersive .relay-terminal { display: none; }
+    body.broadcast-view .shell { padding-block: 24px; }
+    body.broadcast-view .topbar { padding: 15px 20px; }
+    body.broadcast-view .content { padding: 16px 20px; }
+    body.broadcast-view .now-card { grid-template-columns: minmax(270px, 330px) minmax(0, 1fr); gap: 26px; padding: 20px; }
+    body.broadcast-view .about-card { grid-template-columns: auto minmax(0, 1fr); }
+    body.broadcast-view .relay-terminal { opacity: 0.88; }
+
+    @keyframes widget-orbit { from { transform: rotate(0deg) translateX(63px); } to { transform: rotate(360deg) translateX(63px); } }
+    @keyframes widget-core-pulse { 0%, 100% { opacity: 0.55; r: 6px; } 50% { opacity: 1; r: 8px; } }
+    @keyframes widget-carrier { from { width: 72%; } to { width: 84%; } }
+    @keyframes relay-listen { 0%, 100% { opacity: 0.34; } 50% { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) { .orbit-satellite, .orbit-core, .carrier-rail i, .relay-terminal footer i { animation: none !important; } }
+    @media (max-width: 860px) { .about-card { grid-template-columns: 1fr; }.about-links { flex-wrap: wrap; } }
+    @media (max-width: 720px) { .shell { padding-block: 9px; }.content { padding: 14px; }.now-card { padding: 14px; }.telemetry-instruments { grid-template-columns: 1fr 1fr; }.orbit-module { grid-column: 1 / -1; }.monitor::after { display: none; }.app-version { width: 100%; }.lightbox-panel { min-height: 0; padding: 42px 16px 16px; } }
