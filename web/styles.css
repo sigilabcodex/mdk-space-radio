@@ -2236,4 +2236,135 @@
     @keyframes relay-listen { 0%, 100% { opacity: 0.34; } 50% { opacity: 1; } }
     @media (prefers-reduced-motion: reduce) { .orbit-satellite, .orbit-core, .carrier-rail i, .relay-terminal footer i { animation: none !important; } }
     @media (max-width: 860px) { .about-card { grid-template-columns: 1fr; }.about-links { flex-wrap: wrap; } }
-    @media (max-width: 720px) { .shell { padding-block: 9px; }.content { padding: 14px; }.now-card { padding: 14px; }.telemetry-instruments { grid-template-columns: 1fr 1fr; }.orbit-module { grid-column: 1 / -1; }.monitor::after { display: none; }.app-version { width: 100%; }.lightbox-panel { min-height: 0; padding: 42px 16px 16px; } }
+    @media (max-width: 720px) {
+      body { overflow-x: hidden; }
+
+      .shell {
+        width: min(100% - 18px, 560px);
+        padding-block: 10px;
+        align-items: start;
+      }
+
+      .content { padding: 14px; }
+      .main-panel { gap: 12px; }
+
+      .now-card,
+      body.broadcast-view .now-card {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+        padding: 14px;
+      }
+
+      .cover {
+        width: min(100%, 330px);
+        max-width: 330px;
+        margin-inline: auto;
+      }
+
+      .meta { width: 100%; gap: 9px; }
+      .track { font-size: clamp(1.35rem, 7vw, 1.8rem); }
+      .progress-wrap { width: 100%; }
+
+      .player-controls {
+        display: grid;
+        grid-template-columns: auto auto minmax(0, 1fr);
+        gap: 9px;
+        width: 100%;
+      }
+
+      .player-controls input[type="range"] { width: 100%; min-width: 0; }
+
+      .track-links {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        width: 100%;
+      }
+
+      .track-links .link-btn {
+        min-width: 0;
+        padding: 9px 8px;
+        overflow: hidden;
+        text-align: center;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .track-links .link-btn:nth-last-child(-n + 2) { padding: 7px 8px; font-size: 0.72rem; }
+      .support-links { gap: 7px; }
+      .support-links .label { width: 100%; }
+      .support-links .link-btn { padding: 7px 9px; }
+
+      .about-card,
+      body.broadcast-view .about-card {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 9px;
+        padding: 12px 14px;
+      }
+
+      .about-links { flex-wrap: wrap; }
+      .subgrid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+      .monitor, .log { min-width: 0; }
+      .monitor { grid-template-rows: auto 108px auto; padding: 14px; }
+
+      .telemetry-instruments,
+      body.broadcast-view .telemetry-instruments {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .orbit-module { grid-column: 1 / -1; }
+      .orbit-module svg { height: 62px; }
+      .telemetry-module header, .telemetry-module footer { font-size: 0.49rem; }
+      .carrier-readout strong { font-size: 1.36rem; }
+
+      .log {
+        grid-template-rows: auto minmax(54px, auto) minmax(78px, 1fr);
+        gap: 10px;
+        padding: 14px;
+        font-size: 0.78rem;
+      }
+
+      .log-entry { grid-template-columns: 4.8em minmax(0, 1fr); gap: 7px; }
+      .relay-terminal { width: 100%; min-height: 82px; font-size: 0.58rem; }
+      .relay-terminal-lines span { grid-template-columns: 5.5em minmax(7.2em, 0.85fr) minmax(0, 1.15fr); gap: 4px; }
+
+      .footer {
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 7px 12px;
+        padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+        line-height: 1.35;
+      }
+
+      .footer > * { min-width: 0; }
+      .app-version { width: auto; }
+
+      .cover-lightbox {
+        width: calc(100vw - 16px);
+        max-width: none;
+        max-height: calc(100dvh - 16px);
+      }
+
+      .lightbox-panel { min-height: calc(100dvh - 16px); padding: 46px 10px 10px; }
+      .lightbox-image { max-width: 100%; max-height: calc(100dvh - 78px); }
+
+      body.view-immersive .content { padding: 0 10px calc(8px + env(safe-area-inset-bottom)); }
+      body.view-immersive .now-card { grid-template-columns: 56px minmax(0, 1fr); padding: 8px; }
+      body.view-immersive .footer { padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
+      body.view-immersive .deep-immersive-chrome { bottom: calc(10px + env(safe-area-inset-bottom)); }
+
+      body.broadcast-view .shell { width: min(100% - 18px, 560px); padding-block: 10px; }
+      body.broadcast-view .content { padding: 14px; }
+      body.broadcast-view .subgrid { gap: 12px; }
+    }
+
+    @media (max-width: 379px) {
+      .player-controls { grid-template-columns: auto minmax(0, 1fr); }
+      .player-controls input[type="range"] { grid-column: 1 / -1; }
+      .telemetry-instruments,
+      body.broadcast-view .telemetry-instruments { grid-template-columns: minmax(0, 1fr); }
+      .orbit-module { grid-column: auto; }
+      .relay-terminal-lines span { grid-template-columns: 4.9em minmax(0, 1fr); }
+      .relay-terminal-lines em { display: none; }
+    }
