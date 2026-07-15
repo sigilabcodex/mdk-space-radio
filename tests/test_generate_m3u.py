@@ -232,10 +232,13 @@ class GenerateM3UTest(unittest.TestCase):
             generate_m3u.main(["--manifest", str(manifest), "--output", str(output),
                                "--map-output", str(map_output), "--seed", "4"])
         self.assertTrue(output.exists() and map_output.exists())
+        release_metadata_output = map_output.with_name("release-metadata-map.json")
+        self.assertTrue(release_metadata_output.exists())
         destinations = [Path(call.args[1]) for call in replace.call_args_list]
-        self.assertEqual(destinations, [map_output, output])
+        self.assertEqual(destinations, [release_metadata_output, map_output, output])
         self.assertNotIn(generate_m3u.DEFAULT_OUTPUT, destinations)
         self.assertNotIn(generate_m3u.DEFAULT_MAP_OUTPUT, destinations)
+        self.assertNotIn(generate_m3u.DEFAULT_RELEASE_METADATA_MAP_OUTPUT, destinations)
 
     def test_seed_is_deterministic(self):
         manifest = {"schema_version": "1.0", "releases": [release()], "tracks": [
@@ -248,17 +251,17 @@ class GenerateM3UTest(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertNotEqual(first, third)
 
-    def test_1099_track_copy_under_tmp(self):
+    def test_1109_track_copy_under_tmp(self):
         manifest = {"schema_version": "1.0", "releases": [release()], "tracks": [
             track(track_id=f"track-{i}", title=f"Track {i}",
                   stream_url=f"https://audio.test/{i}.mp3")
-            for i in range(1099)
+            for i in range(1109)
         ]}
         count, playlist, metadata, directory = self.run_manifest(manifest)
         self.assertTrue(str(directory).startswith("/tmp/"))
-        self.assertEqual(count, 1099)
-        self.assertEqual(playlist.count("\nannotate:"), 1099)
-        self.assertEqual(len(metadata), 1099)
+        self.assertEqual(count, 1109)
+        self.assertEqual(playlist.count("\nannotate:"), 1109)
+        self.assertEqual(len(metadata), 1109)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import json
 import html
+import logging
 import re
 import time
 import subprocess
@@ -9,6 +10,7 @@ from pathlib import Path
 
 STATUS_URL = "http://127.0.0.1:8000/status-json.xsl"
 MAP_PATH = Path("/opt/swr-radio/cache/playlist-nowplaying-map.json")
+RELEASE_METADATA_MAP_PATH = Path("/opt/swr-radio/cache/release-metadata-map.json")
 
 STATE_PATH = Path("/opt/swr-radio/cache/now-playing-state.json")
 DURATION_CACHE_PATH = Path("/opt/swr-radio/cache/track-duration-cache.json")
@@ -19,6 +21,16 @@ OUT_PATH = PUBLIC_ROOT / "now-playing.json"
 COVERS_DIR = PUBLIC_ROOT / "covers"
 
 STATION_NAME = "MDK Space Radio"
+LOGGER = logging.getLogger(__name__)
+EMPTY_RELEASE_METADATA = {
+    "release_text": "",
+    "release_text_source": None,
+    "release_text_source_url": None,
+    "release_text_fragments": [],
+    "producer_codes": [],
+    "producer_profile": None,
+    "producer_label": None,
+}
 
 def fetch_json(url, timeout=10):
     with urllib.request.urlopen(url, timeout=timeout) as r:
@@ -72,6 +84,34 @@ def read_json_file(path, default):
     except Exception:
         pass
     return default
+
+def load_release_metadata_map():
+    try:
+        data = json.loads(RELEASE_METADATA_MAP_PATH.read_text(encoding="utf-8"))
+        if isinstance(data, dict):
+            return data
+        raise ValueError("release metadata map is not an object")
+    except FileNotFoundError:
+        LOGGER.warning("Release metadata map is missing: %s", RELEASE_METADATA_MAP_PATH)
+    except Exception as error:
+        LOGGER.warning("Release metadata map is unavailable: %s", error)
+    return {}
+
+def release_metadata_fields(release_metadata_map, release_id):
+    item = release_metadata_map.get(release_id)
+    if not isinstance(item, dict):
+        if release_id:
+            LOGGER.warning("Release metadata is missing for %s", release_id)
+        return dict(EMPTY_RELEASE_METADATA)
+    return {
+        "release_text": item.get("release_text") if isinstance(item.get("release_text"), str) else "",
+        "release_text_source": item.get("release_text_source") if isinstance(item.get("release_text_source"), str) else None,
+        "release_text_source_url": item.get("release_text_source_url") if isinstance(item.get("release_text_source_url"), str) else None,
+        "release_text_fragments": item.get("release_text_fragments") if isinstance(item.get("release_text_fragments"), list) else [],
+        "producer_codes": item.get("producer_codes") if isinstance(item.get("producer_codes"), list) else [],
+        "producer_profile": item.get("producer_profile") if isinstance(item.get("producer_profile"), str) else None,
+        "producer_label": item.get("producer_label") if isinstance(item.get("producer_label"), str) else None,
+    }
 
 def write_json_file(path, data):
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -198,6 +238,7 @@ def main():
         })
 
         metadata_map = json.loads(MAP_PATH.read_text(encoding="utf-8"))
+        release_metadata_map = load_release_metadata_map()
 
         normalized_map = {normalize_title(k): v for k, v in metadata_map.items()}
 
@@ -216,6 +257,7 @@ def main():
             now["station"] = STATION_NAME
 
             release_id = match.get("release_id") or "unknown"
+            now.update(release_metadata_fields(release_metadata_map, release_id))
             cover_url = match.get("cover_url")
             ext = safe_ext_from_url(cover_url)
             cover_file = COVERS_DIR / f"{release_id}{ext}"
