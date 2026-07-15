@@ -127,11 +127,7 @@
                 <span class="broadcast-listen-sub">MDK Space Radio · 24/7 experimental transmission</span>
               </div>
 
-              <div class="broadcast-system-widgets" aria-hidden="true">
-                <span class="system-widget system-widget-carrier"><b>Carrier</b><i></i><em>locked</em></span>
-                <span class="system-widget system-widget-drift"><b>Drift</b><i></i><em>± 0.02</em></span>
-                <span class="system-widget system-widget-deck"><b>Deck</b><i></i><em>online</em></span>
-              </div>
+              <div class="broadcast-system-widgets" aria-label="Derived broadcast instruments"></div>
             </div>
           </article>
 
@@ -186,16 +182,8 @@
 
             <div class="box log">
               <div class="label">Transmission log</div>
-              <p id="logLine">Waiting for MDK Space Radio telemetry…</p>
-              <section class="relay-terminal" aria-label="Relay terminal">
-                <header><span>relay terminal / passive</span><b data-relay-node>TRACK --</b></header>
-                <div class="relay-terminal-lines">
-                  <span><i data-relay-time>--:--:--</i><em>archive.sync</em><b data-relay-release>awaiting metadata</b></span>
-                  <span><i data-relay-time>--:--:--</i><em>signal.queue</em><b data-relay-track>awaiting signal</b></span>
-                  <span><i data-relay-time>--:--:--</i><em>stream.progress</em><b data-relay-progress>0.0% complete</b></span>
-                </div>
-                <footer><span>RX LISTEN</span><i></i><b>metadata-derived status_</b></footer>
-              </section>
+              <div id="archiveRegister" aria-label="Transmission log archive register"></div>
+              <section class="relay-terminal" aria-label="Release text relay log" aria-live="off"></section>
             </div>
           </section>
         </section>

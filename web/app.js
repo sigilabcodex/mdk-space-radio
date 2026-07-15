@@ -14,7 +14,6 @@
     const archiveLink = document.getElementById('archiveLink');
     const bandcampLink = document.getElementById('bandcampLink');
     const statusLine = document.getElementById('statusLine');
-    const logLine = document.getElementById('logLine');
     const liveText = document.getElementById('liveText');
     const localClock = document.getElementById('localClock');
     const broadcastStartOverlay = document.getElementById('broadcastStartOverlay');
@@ -61,6 +60,10 @@
     let deepImmersiveIdleTimer = null;
     let lastPresetTrackKey = null;
     let pendingPresetTrackKey = null;
+    let spectrumPalette = {
+      accent1: [117, 205, 170],
+      accent2: [165, 126, 196],
+    };
 
     radio.volume = Number(volume.value);
 
@@ -395,8 +398,8 @@
     function getSpectrumBarColor(level) {
       const eased = Math.pow(clamp01(level), 0.82);
       const low = [99, 255, 213];
-      const mid = [242, 196, 109];
-      const high = [255, 145, 212];
+      const mid = spectrumPalette.accent1;
+      const high = spectrumPalette.accent2;
       const core = eased < 0.55
         ? mixRgb(low, mid, eased / 0.55)
         : mixRgb(mid, high, (eased - 0.55) / 0.45);
@@ -555,6 +558,9 @@
       const presetName = butterchurnPresetNames[butterchurnPresetIndex];
       butterchurnVisualizer.loadPreset(butterchurnPresets[presetName], blendTime);
       rememberButterchurnPresetName(presetName);
+      window.dispatchEvent(new CustomEvent('mdk:preset-changed', {
+        detail: { name: presetName },
+      }));
     }
 
     function trackKeyFromData(data) {
@@ -662,6 +668,8 @@
     function updateProgress() {
       if (!current) return;
 
+      window.UIWidgets.tick(current, receivedAt);
+
       const baseElapsed = Number(current.track_elapsed_seconds);
       const total = Number(current.track_duration_seconds);
 
@@ -679,50 +687,6 @@
       elapsed.textContent = fmt(e);
       duration.textContent = fmt(total);
       progressBar.style.width = `${pct}%`;
-    }
-
-    function formatLogTime(event) {
-      const timestamp = Number(event.started_at_unix);
-      const date = Number.isFinite(timestamp)
-        ? new Date(Math.abs(timestamp) < 1e12 ? timestamp * 1000 : timestamp)
-        : parseLocalTimestamp(event.started_at);
-
-      if (!date || Number.isNaN(date.getTime())) return '--:--';
-
-      return formatLocalTime(date);
-    }
-
-    function renderTransmissionLog(data) {
-      const entries = Array.isArray(data.transmission_log)
-        ? data.transmission_log.slice(0, 5)
-        : [];
-
-      if (!entries.length) {
-        logLine.textContent = `[${data.track_elapsed_display || '0:00'}] ${data.station || 'MDK Space Radio'} transmitting ${data.track_title || data.icecast_title || 'unknown signal'}.`;
-        return;
-      }
-
-      logLine.replaceChildren();
-
-      entries.forEach((event) => {
-        const row = document.createElement('span');
-        const time = document.createElement('span');
-        const title = document.createElement('span');
-        const releaseName = [event.release_id, event.release_title].filter(Boolean).join(' · ');
-
-        row.className = 'log-entry';
-        time.className = 'log-time';
-        title.className = 'log-title';
-
-        time.textContent = formatLogTime(event);
-        title.textContent = [
-          event.track_title || 'unknown signal',
-          releaseName,
-        ].filter(Boolean).join(' / ');
-
-        row.append(time, title);
-        logLine.append(row);
-      });
     }
 
     async function loadNowPlaying() {
@@ -746,7 +710,6 @@
         liveText.textContent = `Live Connections · ${data.listeners ?? 0}`;
         statusLine.textContent = `status live · ${data.bitrate || 160} kbps · ${data.source_format || 'mp3'}`;
         syncDeepImmersiveMini(data);
-        renderTransmissionLog(data);
         window.UIWidgets.syncTelemetry(data);
         maybeRotateButterchurnPreset(data);
 
@@ -822,6 +785,13 @@
       }
 
       revealDeepImmersiveChrome();
+    });
+
+    window.addEventListener('mdk:palette-changed', (event) => {
+      const detail = event.detail || {};
+      if (Array.isArray(detail.accent1) && Array.isArray(detail.accent2)) {
+        spectrumPalette = { accent1: detail.accent1, accent2: detail.accent2 };
+      }
     });
 
     welcomeCloseBtn.addEventListener('click', () => {
