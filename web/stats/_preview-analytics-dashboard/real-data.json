@@ -1,0 +1,348 @@
+{
+  "snapshot_at": "2026-07-17T00:23:28Z",
+  "sources": {
+    "now_playing": "/now-playing.json",
+    "play_history": "/opt/swr-radio/data/play-history.sqlite3",
+    "report": "/stats/stats.json",
+    "catalog": "/opt/swr-radio/data/radio-manifest.json"
+  },
+  "live": {
+    "ok": true,
+    "listeners_now": 1,
+    "listener_peak_lifetime": 27,
+    "bitrate_kbps": 160,
+    "format": "mp3"
+  },
+  "now_playing": {
+    "track_id": "MDK099-D01-T01",
+    "track_title": "Interrupting",
+    "release_id": "MDK099",
+    "release_title": "Poor Dog habits",
+    "artist": "MDK",
+    "cover": "covers/MDK099.webp",
+    "cover_source": "https://archive.org/download/mdk099-poor-dog-habits/cover.png",
+    "started_at": "2026-07-17T00:20:04Z",
+    "elapsed_seconds": 204.082,
+    "duration_seconds": 410.184,
+    "progress_percent": 49.75,
+    "connections": 1
+  },
+  "play_history": {
+    "tracking_start": "2026-07-12T01:28:26.270000Z",
+    "tracking_end": "2026-07-17T00:19:56.230000Z",
+    "total_plays": 965,
+    "unique_tracks": 734,
+    "unique_releases": 148,
+    "top_releases": [
+      {
+        "release_id": "MDK062",
+        "title": "Psychedelic Breakfast",
+        "artist": "MDK",
+        "broadcast_plays": 16,
+        "cover": "covers/MDK062.webp",
+        "cover_source": "https://archive.org/download/mdk062-psychedelic-breakfast/cover.png"
+      },
+      {
+        "release_id": "MDK049",
+        "title": "Through the Looking-Glass, and What Alice Found There",
+        "artist": "MDK",
+        "broadcast_plays": 14,
+        "cover": "covers/MDK049.webp",
+        "cover_source": "https://archive.org/download/mdk049-through-the-looking-glass-and-what-alice-found-there/cover.png"
+      },
+      {
+        "release_id": "MDK131",
+        "title": "Taniel",
+        "artist": "MDK",
+        "broadcast_plays": 13,
+        "cover": "covers/MDK131.webp",
+        "cover_source": "https://archive.org/download/mdk131-taniel/cover.png"
+      },
+      {
+        "release_id": "MDK142",
+        "title": "Heartbeat (OST)",
+        "artist": "MDK",
+        "broadcast_plays": 12,
+        "cover": "covers/MDK142.webp",
+        "cover_source": "https://archive.org/download/mdk142-heartbeat-ost/cover.png"
+      },
+      {
+        "release_id": "MDK010",
+        "title": "The angry child",
+        "artist": "MDK",
+        "broadcast_plays": 11,
+        "cover": "covers/MDK010.webp",
+        "cover_source": "https://archive.org/download/mdk010-the-angry-child/cover.png"
+      },
+      {
+        "release_id": "MDK012",
+        "title": "Meine kleine Stadt",
+        "artist": "MDK",
+        "broadcast_plays": 11,
+        "cover": "covers/MDK012.webp",
+        "cover_source": "https://archive.org/download/mdk012-meine-kleine-stadt/cover.png"
+      }
+    ],
+    "top_tracks": [
+      {
+        "track_id": "MDK007-D01-T03",
+        "title": "The Sanatorium of Dr. Vliperdius",
+        "release_id": "MDK007",
+        "release_title": "Memoirs Found in a Bathtub",
+        "broadcast_plays": 3,
+        "duration_seconds": 814.6088662131519,
+        "cover": "covers/MDK007.webp"
+      },
+      {
+        "track_id": "MDK010-D01-T03",
+        "title": "in first day at kindergarden",
+        "release_id": "MDK010",
+        "release_title": "The angry child",
+        "broadcast_plays": 3,
+        "duration_seconds": 369.23077083333334,
+        "cover": "covers/MDK010.webp"
+      },
+      {
+        "track_id": "MDK030-D01-T02",
+        "title": "One-thousand and one nights",
+        "release_id": "MDK030",
+        "release_title": "Four Fairy Tales",
+        "broadcast_plays": 3,
+        "duration_seconds": 286.8505416666667,
+        "cover": "covers/MDK030.webp"
+      },
+      {
+        "track_id": "MDK035-D01-T01",
+        "title": "My Bass",
+        "release_id": "MDK035",
+        "release_title": "Illigal in Chicago",
+        "broadcast_plays": 3,
+        "duration_seconds": 392.8738333333333,
+        "cover": "covers/MDK035.webp"
+      },
+      {
+        "track_id": "MDK049-D01-T05",
+        "title": "The Red Queen",
+        "release_id": "MDK049",
+        "release_title": "Through the Looking-Glass, and What Alice Found There",
+        "broadcast_plays": 3,
+        "duration_seconds": 336.0,
+        "cover": "covers/MDK049.webp"
+      },
+      {
+        "track_id": "MDK053-D01-T07",
+        "title": "Embezzler",
+        "release_id": "MDK053",
+        "release_title": "Grifters",
+        "broadcast_plays": 3,
+        "duration_seconds": 364.66189583333335,
+        "cover": "covers/MDK053.webp"
+      }
+    ],
+    "track_markers_24h": [
+      {
+        "started_at": "2026-07-16T03:21:34.230000Z",
+        "track_id": "MDK124-D01-T01",
+        "release_id": "MDK124",
+        "track_title": "The world seems to oscillate"
+      },
+      {
+        "started_at": "2026-07-16T05:44:45.950000Z",
+        "track_id": "MDK107-D01-T04",
+        "release_id": "MDK107",
+        "track_title": "A walk through the park"
+      },
+      {
+        "started_at": "2026-07-16T07:51:15.110000Z",
+        "track_id": "MDK069-D01-T04",
+        "release_id": "MDK069",
+        "track_title": "Nothing is done yet"
+      },
+      {
+        "started_at": "2026-07-16T09:53:06.270000Z",
+        "track_id": "MDK150-D01-T01",
+        "release_id": "MDK150",
+        "track_title": "Joseph ibn Sham'un"
+      },
+      {
+        "started_at": "2026-07-16T12:22:02.110000Z",
+        "track_id": "MDK010-D01-T03",
+        "release_id": "MDK010",
+        "track_title": "in first day at kindergarden"
+      },
+      {
+        "started_at": "2026-07-16T14:18:37.150000Z",
+        "track_id": "MDK015-D01-T01",
+        "release_id": "MDK015",
+        "track_title": "The Confusions"
+      },
+      {
+        "started_at": "2026-07-16T16:43:43.710000Z",
+        "track_id": "MDK053-D01-T07",
+        "release_id": "MDK053",
+        "track_title": "Embezzler"
+      },
+      {
+        "started_at": "2026-07-16T19:27:27.350000Z",
+        "track_id": "MDK055-D01-T01",
+        "release_id": "MDK055",
+        "track_title": "The sagacious Bug"
+      },
+      {
+        "started_at": "2026-07-16T21:44:55.030000Z",
+        "track_id": "MDK063-D01-T05",
+        "release_id": "MDK063",
+        "track_title": "Dance for me"
+      },
+      {
+        "started_at": "2026-07-17T00:02:39.030000Z",
+        "track_id": "MDK025-D01-T05",
+        "release_id": "MDK025",
+        "track_title": "Blueberry Green"
+      }
+    ],
+    "recent_transmissions": [
+      {
+        "started_at": "2026-07-17T00:20:04Z",
+        "started_at_unix": 1784247604.797352,
+        "track_title": "Interrupting",
+        "release_id": "MDK099",
+        "release_title": "Poor Dog habits",
+        "artist": "MDK",
+        "source_url": "https://archive.org/download/mdk099-poor-dog-habits/01%20-%20Interrupting.mp3",
+        "archive_details_url": "https://archive.org/details/mdk099-poor-dog-habits",
+        "bandcamp_url": "https://mdklabs.bandcamp.com/album/099-poor-dog-habits",
+        "cover": "covers/MDK099.webp",
+        "kind": "track"
+      },
+      {
+        "started_at": "2026-07-17T00:12:25Z",
+        "started_at_unix": 1784247145.513825,
+        "track_title": "Tools, Not Systems",
+        "release_id": "MDK106",
+        "release_title": "Sacrifice Convenience",
+        "artist": "MDK",
+        "source_url": "https://archive.org/download/mdk106-sacrifice-convenience/02%20-%20Tools%2C%20Not%20Systems.mp3",
+        "archive_details_url": "https://archive.org/details/mdk106-sacrifice-convenience",
+        "bandcamp_url": "https://mdklabs.bandcamp.com/album/106-sacrifice-convenience",
+        "cover": "covers/MDK106.webp",
+        "kind": "track"
+      },
+      {
+        "started_at": "2026-07-17T00:08:50Z",
+        "started_at_unix": 1784246930.65023,
+        "track_title": "Hail Lucipurr",
+        "release_id": "MDK063",
+        "release_title": "Our darkness; your enlightenment",
+        "artist": "MDK",
+        "source_url": "https://archive.org/download/mdk063-our-darkness-your-enlightenment/03%20-%20Hail%20Lucipurr.mp3",
+        "archive_details_url": "https://archive.org/details/mdk063-our-darkness-your-enlightenment",
+        "bandcamp_url": "https://mdklabs.bandcamp.com/album/063-our-darkness-your-enlightenment",
+        "cover": "covers/MDK063.webp",
+        "kind": "track"
+      },
+      {
+        "started_at": "2026-07-17T00:02:43Z",
+        "started_at_unix": 1784246563.544675,
+        "track_title": "Blueberry Green",
+        "release_id": "MDK025",
+        "release_title": "The Greens",
+        "artist": "MDK",
+        "source_url": "https://archive.org/download/mdk025-the-greens/05%20-%20Blueberry%20Green.mp3",
+        "archive_details_url": "https://archive.org/details/mdk025-the-greens",
+        "bandcamp_url": "https://mdklabs.bandcamp.com/album/025-the-greens",
+        "cover": "covers/MDK025.webp",
+        "kind": "track"
+      },
+      {
+        "started_at": "2026-07-16T23:57:07Z",
+        "started_at_unix": 1784246227.1070154,
+        "track_title": "Non Unique Habitat",
+        "release_id": "MDK072",
+        "release_title": "The Three Mocking Lizard",
+        "artist": "MDK",
+        "source_url": "https://archive.org/download/mdk072-the-three-mocking-lizard/06%20-%20Non%20Unique%20Habitat.mp3",
+        "archive_details_url": "https://archive.org/details/mdk072-the-three-mocking-lizard",
+        "bandcamp_url": "https://mdklabs.bandcamp.com/album/072-the-three-mocking-lizard",
+        "cover": "covers/MDK072.webp",
+        "kind": "track"
+      },
+      {
+        "started_at": "2026-07-16T23:49:38Z",
+        "started_at_unix": 1784245778.9839427,
+        "track_title": "Yuppies go to hell",
+        "release_id": "MDK111",
+        "release_title": "Make a Blues noise here",
+        "artist": "MDK",
+        "source_url": "https://archive.org/download/mdk111-make-a-blues-noise-here/03%20-%20Yuppies%20go%20to%20hell.mp3",
+        "archive_details_url": "https://archive.org/details/mdk111-make-a-blues-noise-here",
+        "bandcamp_url": "https://mdklabs.bandcamp.com/album/111-make-a-blues-noise-here",
+        "cover": "covers/MDK111.webp",
+        "kind": "track"
+      },
+      {
+        "started_at": "2026-07-16T23:42:20Z",
+        "started_at_unix": 1784245340.853485,
+        "track_title": "Digital silence",
+        "release_id": "MDK124",
+        "release_title": "What the Next Quarter Century Will Bring Us",
+        "artist": "MDK",
+        "source_url": "https://archive.org/download/mdk124-what-the-next-quarter-century-will-bring-us/04%20-%20Digital%20silence.mp3",
+        "archive_details_url": "https://archive.org/details/mdk124-what-the-next-quarter-century-will-bring-us",
+        "bandcamp_url": "https://mdklabs.bandcamp.com/album/124-what-the-next-quarter-century-will-bring-us",
+        "cover": "covers/MDK124.webp",
+        "kind": "track"
+      },
+      {
+        "started_at": "2026-07-16T23:36:14Z",
+        "started_at_unix": 1784244974.2103572,
+        "track_title": "Giaour",
+        "release_id": "MDK061",
+        "release_title": "Vampyr (Halloween special)",
+        "artist": "MDK",
+        "source_url": "https://archive.org/download/mdk061-vampyr-halloween-special/08%20-%20Giaour.mp3",
+        "archive_details_url": "https://archive.org/details/mdk061-vampyr-halloween-special",
+        "bandcamp_url": "https://mdklabs.bandcamp.com/album/061-vampyr-halloween-special",
+        "cover": "covers/MDK061.webp",
+        "kind": "track"
+      }
+    ]
+  },
+  "health": [
+    {
+      "name": "Icecast",
+      "status": "signal",
+      "detail": "Live status relayed by now-playing.json",
+      "observed_at": "2026-07-17T00:23:28Z"
+    },
+    {
+      "name": "Liquidsoap",
+      "status": "inferred",
+      "detail": "Track transitions are arriving",
+      "observed_at": "2026-07-17T00:19:56.230000Z"
+    },
+    {
+      "name": "Now-playing updater",
+      "status": "signal",
+      "detail": "Public snapshot refreshed",
+      "observed_at": "2026-07-17T00:23:28Z"
+    },
+    {
+      "name": "Play-history consumer",
+      "status": "inferred",
+      "detail": "Latest SQLite event",
+      "observed_at": "2026-07-17T00:19:56.230000Z"
+    },
+    {
+      "name": "Report generator",
+      "status": "signal",
+      "detail": "Static report refreshed",
+      "observed_at": "2026-07-17T00:21:53.282979Z"
+    }
+  ],
+  "artifact_mtimes": {
+    "database": "2026-07-17T00:22:51.719427Z",
+    "now_playing": "2026-07-17T00:23:28.945835Z",
+    "report": "2026-07-17T00:21:53.355788Z"
+  }
+}

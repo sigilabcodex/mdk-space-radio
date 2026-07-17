@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Isolated MDK Space Radio analytics dashboard preview">
+  <title>MDK Space Radio · Signal Analytics Preview</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='32' fill='%23070a0b'/%3E%3Ccircle cx='32' cy='32' r='25' fill='none' stroke='%2385f6b8' stroke-width='2'/%3E%3Cellipse cx='32' cy='32' rx='17' ry='6' fill='none' stroke='%236ed7dc' stroke-width='2' transform='rotate(8 32 32)'/%3E%3Ccircle cx='13' cy='30' r='4' fill='%2385f6b8'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to telemetry</a>
+  <header class="station-header">
+    <div class="identity">
+      <span class="orbital-mark" aria-hidden="true"><i></i></span>
+      <div><p class="kicker">ORBITAL TRANSMISSION / ANALYTICS</p><h1>MDK Space Radio</h1></div>
+    </div>
+    <div class="header-status">
+      <span class="live-lock"><i aria-hidden="true"></i>Live signal</span>
+      <span class="updated">Sync <time id="updatedAt">—</time></span>
+      <label class="period">Period <select id="periodSelect" aria-label="Analytics period"><option value="24h">Last 24 hours</option><option disabled>Last 7 days · future</option><option disabled>Last 30 days · future</option></select></label>
+    </div>
+  </header>
+
+  <nav class="console-tabs" aria-label="Analytics sections">
+    <a href="#main" aria-current="page">Overview</a>
+    <span aria-disabled="true">Live Signal</span><span aria-disabled="true">Listening</span>
+    <span aria-disabled="true">Content</span><span aria-disabled="true">Website</span><span aria-disabled="true">System</span>
+  </nav>
+
+  <main id="main">
+    <section class="section-intro" aria-labelledby="overviewTitle">
+      <div><p class="kicker">MISSION CONTROL / OVERVIEW</p><h2 id="overviewTitle">Signal performance</h2></div>
+      <div class="legend" aria-label="Data provenance"><span><i class="real-dot"></i>Real signal</span><span><i class="demo-dot"></i>Demo model</span></div>
+    </section>
+
+    <section id="kpis" class="kpi-grid" aria-label="Key metrics"></section>
+
+    <section class="hero-grid">
+      <article class="module chart-module" aria-labelledby="listenerTitle">
+        <header class="module-head"><div><p class="module-code">SIGNAL / L–24</p><h2 id="listenerTitle">Listeners over time</h2></div><span id="listenerDataState" class="real-badge">REAL</span></header>
+        <p class="module-note">Real five-minute aggregates · real track-change markers</p>
+        <div id="listenerChart" class="listener-chart" role="img" aria-label="Real average concurrent listeners over the last 24 hours, with track change markers"></div>
+        <div class="chart-foot"><span>24 hours ago</span><span>12 hours ago</span><span>Now</span></div>
+      </article>
+
+      <article class="module now-playing" aria-labelledby="nowTitle">
+        <header class="module-head"><div><p class="module-code">CARRIER / CURRENT</p><h2 id="nowTitle">Now playing</h2></div><span class="live-pulse">On air</span></header>
+        <div id="nowPlaying"></div>
+      </article>
+    </section>
+
+    <section class="content-grid">
+      <article class="module releases-module" aria-labelledby="releasesTitle">
+        <header class="module-head"><div><p class="module-code">CATALOG / RELEASES</p><h2 id="releasesTitle">Top releases</h2></div><span class="mixed-badge">MIXED SOURCES</span></header>
+        <p class="module-note">Rank: real broadcast plays · engagement: <b>DEMO DATA</b></p>
+        <div id="topReleases" class="release-list"></div>
+      </article>
+
+      <article class="module tracks-module" aria-labelledby="tracksTitle">
+        <header class="module-head"><div><p class="module-code">CATALOG / TRACKS</p><h2 id="tracksTitle">Top tracks</h2></div><span class="mixed-badge">MIXED SOURCES</span></header>
+        <p class="module-note">Rank: real broadcast plays · listening: <b>DEMO DATA</b></p>
+        <div id="topTracks" class="track-list"></div>
+      </article>
+    </section>
+
+    <section class="lower-grid">
+      <article class="module duration-module" aria-labelledby="durationTitle">
+        <header class="module-head"><div><p class="module-code">LISTENING / DEPTH</p><h2 id="durationTitle">Session duration</h2></div><span class="demo-badge">DEMO DATA</span></header>
+        <p class="module-note">Modeled distribution of continuous listening sessions.</p>
+        <div id="sessionDuration" class="bucket-chart"></div>
+      </article>
+
+      <article class="module activity-module" aria-labelledby="activityTitle">
+        <header class="module-head"><div><p class="module-code">EVENT BUS / RECENT</p><h2 id="activityTitle">Recent activity</h2></div><span class="real-badge">REAL</span></header>
+        <div id="recentActivity" class="activity-list"></div>
+      </article>
+
+      <article class="module health-module" aria-labelledby="healthTitle">
+        <header class="module-head"><div><p class="module-code">GROUND / SERVICES</p><h2 id="healthTitle">System health</h2></div><button class="info" aria-label="Health status methodology" data-tip="Signal = direct fresh artifact. Inferred = recent output proves the pipeline was working, not a direct service check.">?</button></header>
+        <div id="systemHealth" class="health-list"></div>
+      </article>
+    </section>
+
+    <aside class="definitions" aria-labelledby="definitionsTitle">
+      <div><p class="module-code">PRIVACY / DEFINITIONS</p><h2 id="definitionsTitle">What each count means</h2></div>
+      <dl>
+        <div><dt>Web visits</dt><dd>Browser visits to the site; not listeners.</dd></div>
+        <div><dt>Player starts</dt><dd>Attempts to start the web player; not confirmed listening.</dd></div>
+        <div><dt>Stream connections</dt><dd>Connections reported by Icecast at a moment in time.</dd></div>
+        <div><dt>Listening sessions</dt><dd>Future continuous connection intervals after session tracking exists.</dd></div>
+        <div><dt>Current listeners</dt><dd>Current Icecast connections; no claim of unique people.</dd></div>
+      </dl>
+    </aside>
+  </main>
+
+  <footer><span>MDK SPACE RADIO / ANALYTICS CONCEPT v0.1</span><span>ISOLATED PREVIEW · NOT PUBLISHED</span></footer>
+  <div id="loadError" class="load-error" role="alert" hidden></div>
+  <script src="app.js" defer></script>
+</body>
+</html>
