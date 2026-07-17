@@ -1,0 +1,11 @@
+{
+  "icestats": {
+    "source": {
+      "listenurl": "http://localhost:8000/strange-waves.mp3",
+      "listeners": 0,
+      "listener_peak": 27,
+      "bitrate": 160,
+      "server_type": "audio/mpeg"
+    }
+  }
+}

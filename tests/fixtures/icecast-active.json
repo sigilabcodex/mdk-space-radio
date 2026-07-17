@@ -1,0 +1,13 @@
+{
+  "icestats": {
+    "server_id": "Icecast 2.4.4",
+    "source": {
+      "listenurl": "http://127.0.0.1:8000/strange-waves.mp3",
+      "listeners": 7,
+      "listener_peak": 27,
+      "bitrate": 160,
+      "server_type": "audio/mpeg",
+      "server_name": "MDK Space Radio"
+    }
+  }
+}
