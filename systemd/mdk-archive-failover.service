@@ -1,0 +1,11 @@
+[Unit]
+Description=MDK Space Radio Internet Archive failover check
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=diego
+Group=diego
+WorkingDirectory=/opt/swr-radio
+ExecStart=/opt/swr-radio/bin/archive-failover.py

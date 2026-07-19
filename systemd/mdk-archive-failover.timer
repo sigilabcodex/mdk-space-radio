@@ -1,0 +1,12 @@
+[Unit]
+Description=Check Internet Archive availability for MDK Space Radio
+
+[Timer]
+OnBootSec=60
+OnUnitActiveSec=120
+AccuracySec=10
+Persistent=true
+Unit=mdk-archive-failover.service
+
+[Install]
+WantedBy=timers.target
