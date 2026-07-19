@@ -1,0 +1,3 @@
+#EXTM3U
+#EXTINF:12.5,First track
+annotate:title="First track",artist="MDK",album="First release",release_id="MDK001":@MEDIA_ROOT@/one.mp3

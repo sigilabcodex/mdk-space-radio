@@ -1,0 +1,5 @@
+#EXTM3U
+#EXTINF:12.5,First track
+annotate:title="First track",artist="MDK",album="First release",track_id="MDK001-D01-T01",release_id="MDK001":@MEDIA_ROOT@/one.mp3
+#EXTINF:21,Second track
+annotate:title="Second track",artist="MDK",album="Second release",track_id="MDK002-D01-T01",release_id="MDK002":@MEDIA_ROOT@/one.mp3

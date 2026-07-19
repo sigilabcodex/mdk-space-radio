@@ -1,0 +1,3 @@
+#EXTM3U
+#EXTINF:12.5,Remote track
+annotate:title="Remote track",artist="MDK",album="Remote release",track_id="MDK001-D01-T01",release_id="MDK001":https://archive.org/download/example/track.mp3

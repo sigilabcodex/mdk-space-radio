@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import fcntl
 import json
+import math
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -14,7 +16,7 @@ from pathlib import Path
 
 ROOT = Path("/opt/swr-radio")
 REMOTE_PLAYLIST = ROOT / "cache/playlist.m3u"
-LOCAL_PLAYLIST = ROOT / "cache/emergency-local.m3u"
+LOCAL_PLAYLIST = ROOT / "cache/emergency-local-enriched.m3u"
 ACTIVE_PLAYLIST = ROOT / "cache/active-playlist.m3u"
 
 STATE_FILE = ROOT / "cache/archive-failover-state.json"
@@ -30,6 +32,11 @@ PROBE_URL = (
 
 FAILURES_TO_LOCAL = 2
 SUCCESSES_TO_REMOTE = 3
+
+ANNOTATE_FIELD = re.compile(
+    r'([A-Za-z_][A-Za-z0-9_]*)="((?:\\.|[^"\\])*)"'
+)
+REQUIRED_LOCAL_FIELDS = ("track_id", "release_id", "title", "artist", "album")
 
 
 def now() -> str:
@@ -105,8 +112,196 @@ def valid_playlist(path: Path) -> bool:
     return len(lines) > 0
 
 
+def invalid_local_playlist(path: Path, reason: str) -> RuntimeError:
+    return RuntimeError(f"Invalid local enriched playlist {path}: {reason}")
+
+
+def parse_annotate_source(path: Path, line: str, line_number: int) -> tuple[dict, str]:
+    if not line.startswith("annotate:"):
+        raise invalid_local_playlist(
+            path,
+            f"line {line_number}: every media entry must use annotate:",
+        )
+
+    source = line[len("annotate:"):]
+    quoted = False
+    escaped = False
+    separator = None
+
+    for index, character in enumerate(source):
+        if escaped:
+            escaped = False
+        elif quoted and character == "\\":
+            escaped = True
+        elif character == '"':
+            quoted = not quoted
+        elif character == ":" and not quoted:
+            separator = index
+            break
+
+    if separator is None or quoted:
+        raise invalid_local_playlist(
+            path,
+            f"line {line_number}: malformed annotate quoting or missing media separator",
+        )
+
+    raw_fields = source[:separator]
+    media = source[separator + 1:]
+    fields = {}
+    position = 0
+
+    while position < len(raw_fields):
+        match = ANNOTATE_FIELD.match(raw_fields, position)
+        if match is None:
+            raise invalid_local_playlist(
+                path,
+                f"line {line_number}: malformed annotate field or quote structure",
+            )
+
+        key, value = match.groups()
+        if key in fields:
+            raise invalid_local_playlist(
+                path,
+                f"line {line_number}: duplicate annotate field {key}",
+            )
+        fields[key] = value
+        position = match.end()
+
+        if position == len(raw_fields):
+            break
+        if raw_fields[position] != ",":
+            raise invalid_local_playlist(
+                path,
+                f"line {line_number}: malformed annotate field separator",
+            )
+        position += 1
+        if position == len(raw_fields):
+            raise invalid_local_playlist(
+                path,
+                f"line {line_number}: malformed annotate trailing comma",
+            )
+
+    if not fields or not media:
+        raise invalid_local_playlist(
+            path,
+            f"line {line_number}: annotate entry is missing fields or media path",
+        )
+
+    return fields, media
+
+
+def validate_local_enriched_playlist(path: Path) -> int:
+    if not path.is_file():
+        raise invalid_local_playlist(path, "source must exist and be a regular file")
+
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError as error:
+        raise invalid_local_playlist(path, f"cannot read source: {error}") from error
+
+    meaningful = [line.strip() for line in lines if line.strip()]
+    if not meaningful:
+        raise invalid_local_playlist(path, "source must be nonempty")
+    if meaningful[0] != "#EXTM3U":
+        raise invalid_local_playlist(path, "first meaningful line must be #EXTM3U")
+
+    pending_duration = None
+    pending_line = None
+    entry_count = 0
+    track_ids = set()
+    media_paths = set()
+
+    for line_number, raw_line in enumerate(lines, start=1):
+        line = raw_line.strip()
+        if not line or line == "#EXTM3U":
+            continue
+
+        if line.startswith("#EXTINF:"):
+            if pending_duration is not None:
+                raise invalid_local_playlist(
+                    path,
+                    f"line {line_number}: previous #EXTINF has no media entry",
+                )
+            match = re.fullmatch(r"#EXTINF:([^,]+),.*", line)
+            try:
+                duration = float(match.group(1)) if match else None
+            except ValueError:
+                duration = None
+            if duration is None or not math.isfinite(duration) or duration <= 0:
+                raise invalid_local_playlist(
+                    path,
+                    f"line {line_number}: #EXTINF duration must be a positive number",
+                )
+            pending_duration = duration
+            pending_line = line_number
+            continue
+
+        if line.startswith("#"):
+            continue
+
+        if pending_duration is None:
+            raise invalid_local_playlist(
+                path,
+                f"line {line_number}: media entry must have a preceding #EXTINF line",
+            )
+
+        fields, media = parse_annotate_source(path, line, line_number)
+        for field in REQUIRED_LOCAL_FIELDS:
+            if not fields.get(field, "").strip():
+                raise invalid_local_playlist(
+                    path,
+                    f"line {line_number}: annotate entry requires nonempty {field}",
+                )
+
+        media_path = Path(media)
+        if media.startswith(("http://", "https://")) or not media_path.is_absolute():
+            raise invalid_local_playlist(
+                path,
+                f"line {line_number}: media must be an absolute local path",
+            )
+        if not media_path.is_file():
+            raise invalid_local_playlist(
+                path,
+                f"line {line_number}: local media must exist and be a regular file",
+            )
+
+        track_id = fields["track_id"]
+        if track_id in track_ids:
+            raise invalid_local_playlist(
+                path,
+                f"line {line_number}: Duplicate track_id {track_id}",
+            )
+        if media in media_paths:
+            raise invalid_local_playlist(
+                path,
+                f"line {line_number}: Duplicate local media path {media}",
+            )
+
+        track_ids.add(track_id)
+        media_paths.add(media)
+        entry_count += 1
+        pending_duration = None
+        pending_line = None
+
+    if pending_duration is not None:
+        raise invalid_local_playlist(
+            path,
+            f"line {pending_line}: #EXTINF has no following media entry",
+        )
+    if entry_count == 0:
+        raise invalid_local_playlist(path, "source must contain at least one entry")
+
+    return entry_count
+
+
 def activate(source: Path, mode: str) -> None:
-    if not valid_playlist(source):
+    if mode == "local":
+        try:
+            validate_local_enriched_playlist(source)
+        except RuntimeError as error:
+            log(f"SWITCH-BLOCKED mode=local source={source} reason={error}")
+            raise
+    elif not valid_playlist(source):
         raise RuntimeError(f"Playlist inválida o vacía: {source}")
 
     ACTIVE_PLAYLIST.parent.mkdir(parents=True, exist_ok=True)

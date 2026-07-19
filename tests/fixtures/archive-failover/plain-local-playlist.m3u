@@ -1,0 +1,3 @@
+#EXTM3U
+#EXTINF:12.5,Plain local track
+@MEDIA_ROOT@/one.mp3

@@ -37,16 +37,23 @@ class ArchiveFailoverTest(unittest.TestCase):
         self.logs = self.root / "logs"
         self.cache.mkdir()
         self.logs.mkdir()
+        self.media = self.root / "media"
+        self.media.mkdir()
+        for name in ("one.mp3", "two.mp3"):
+            (self.media / name).write_bytes(f"fixture-{name}".encode("ascii"))
 
         self.remote = self.cache / "playlist.m3u"
-        self.local = self.cache / "emergency-local.m3u"
+        self.local = self.cache / "emergency-local-enriched.m3u"
         self.active = self.cache / "active-playlist.m3u"
         self.state = self.cache / "archive-failover-state.json"
         self.lock = self.cache / "archive-failover.lock"
         self.log = self.logs / "archive-failover.log"
 
         self.remote.write_text("remote-track\n", encoding="utf-8")
-        self.local.write_text("local-track\n", encoding="utf-8")
+        self.local.write_text(
+            fixture("valid-enriched.m3u").replace("@MEDIA_ROOT@", str(self.media)),
+            encoding="utf-8",
+        )
         self.active.write_text("previous-track\n", encoding="utf-8")
 
         replacements = {
@@ -81,6 +88,14 @@ class ArchiveFailoverTest(unittest.TestCase):
 
     def read_state(self):
         return json.loads(self.state.read_text(encoding="utf-8"))
+
+    def materialize_fixture(self, name, destination=None):
+        destination = destination or self.cache / name
+        destination.write_text(
+            fixture(name).replace("@MEDIA_ROOT@", str(self.media)),
+            encoding="utf-8",
+        )
+        return destination
 
     def run_cycle(self, success, report=None):
         report = report or ("206|audio/mpeg|65536" if success else "503|text/html|100")
@@ -173,8 +188,147 @@ class ArchiveFailoverTest(unittest.TestCase):
         empty.write_text("#EXTM3U\n# comment only\n", encoding="utf-8")
         for candidate in (missing, empty):
             with self.subTest(candidate=candidate.name):
-                with self.assertRaisesRegex(RuntimeError, "Playlist inválida o vacía"):
+                with self.assertRaises(RuntimeError):
                     archive_failover.activate(candidate, "local")
+
+    def test_valid_enriched_playlist_is_accepted(self):
+        self.assertEqual(archive_failover.validate_local_enriched_playlist(self.local), 2)
+
+    def test_plain_local_playlist_is_rejected(self):
+        candidate = self.materialize_fixture("plain-local-playlist.m3u")
+        with self.assertRaisesRegex(RuntimeError, "annotate"):
+            archive_failover.validate_local_enriched_playlist(candidate)
+
+    def test_missing_track_or_release_id_is_rejected(self):
+        for name, field in (
+            ("missing-track-id.m3u", "track_id"),
+            ("missing-release-id.m3u", "release_id"),
+        ):
+            with self.subTest(name=name):
+                candidate = self.materialize_fixture(name)
+                with self.assertRaisesRegex(RuntimeError, field):
+                    archive_failover.validate_local_enriched_playlist(candidate)
+
+    def test_missing_title_artist_or_album_is_rejected(self):
+        original = fixture("valid-enriched.m3u").replace("@MEDIA_ROOT@", str(self.media))
+        for field, value in (
+            ("title", 'title="First track",'),
+            ("artist", 'artist="MDK",'),
+            ("album", 'album="First release",'),
+        ):
+            with self.subTest(field=field):
+                candidate = self.cache / f"missing-{field}.m3u"
+                candidate.write_text(original.replace(value, "", 1), encoding="utf-8")
+                with self.assertRaisesRegex(RuntimeError, field):
+                    archive_failover.validate_local_enriched_playlist(candidate)
+
+    def test_missing_local_media_file_is_rejected(self):
+        candidate = self.materialize_fixture("missing-media-file.m3u")
+        with self.assertRaisesRegex(RuntimeError, "regular file"):
+            archive_failover.validate_local_enriched_playlist(candidate)
+
+    def test_duplicate_track_id_is_rejected(self):
+        candidate = self.materialize_fixture("duplicate-track-id.m3u")
+        with self.assertRaisesRegex(RuntimeError, "Duplicate track_id"):
+            archive_failover.validate_local_enriched_playlist(candidate)
+
+    def test_duplicate_local_path_is_rejected(self):
+        candidate = self.materialize_fixture("duplicate-media-path.m3u")
+        with self.assertRaisesRegex(RuntimeError, "Duplicate local media path"):
+            archive_failover.validate_local_enriched_playlist(candidate)
+
+    def test_nonpositive_and_malformed_durations_are_rejected(self):
+        nonpositive = self.materialize_fixture("nonpositive-duration.m3u")
+        malformed = self.cache / "malformed-duration.m3u"
+        malformed.write_text(
+            fixture("valid-enriched.m3u")
+            .replace("@MEDIA_ROOT@", str(self.media))
+            .replace("#EXTINF:12.5,", "#EXTINF:not-a-number,", 1),
+            encoding="utf-8",
+        )
+        for candidate in (nonpositive, malformed):
+            with self.subTest(candidate=candidate.name):
+                with self.assertRaisesRegex(RuntimeError, "duration"):
+                    archive_failover.validate_local_enriched_playlist(candidate)
+
+    def test_remote_and_relative_media_paths_are_rejected(self):
+        remote = self.materialize_fixture("remote-url-in-local-playlist.m3u")
+        relative = self.cache / "relative-media.m3u"
+        relative.write_text(
+            fixture("valid-enriched.m3u")
+            .replace("@MEDIA_ROOT@/one.mp3", "relative/one.mp3")
+            .replace("@MEDIA_ROOT@", str(self.media)),
+            encoding="utf-8",
+        )
+        for candidate in (remote, relative):
+            with self.subTest(candidate=candidate.name):
+                with self.assertRaisesRegex(RuntimeError, "absolute local path"):
+                    archive_failover.validate_local_enriched_playlist(candidate)
+
+    def test_malformed_annotate_syntax_is_rejected(self):
+        candidate = self.materialize_fixture("malformed-annotate.m3u")
+        with self.assertRaisesRegex(RuntimeError, "annotate"):
+            archive_failover.validate_local_enriched_playlist(candidate)
+
+    def test_header_entry_pairing_and_regular_file_are_required(self):
+        no_header = self.cache / "no-header.m3u"
+        no_header.write_text(
+            fixture("valid-enriched.m3u")
+            .replace("#EXTM3U\n", "", 1)
+            .replace("@MEDIA_ROOT@", str(self.media)),
+            encoding="utf-8",
+        )
+        no_extinf = self.cache / "no-extinf.m3u"
+        no_extinf.write_text(
+            fixture("valid-enriched.m3u")
+            .replace("#EXTINF:12.5,First track\n", "", 1)
+            .replace("@MEDIA_ROOT@", str(self.media)),
+            encoding="utf-8",
+        )
+        directory = self.cache / "playlist-directory"
+        directory.mkdir()
+        for candidate, message in (
+            (no_header, "#EXTM3U"),
+            (no_extinf, "#EXTINF"),
+            (directory, "regular file"),
+        ):
+            with self.subTest(candidate=candidate.name):
+                with self.assertRaisesRegex(RuntimeError, message):
+                    archive_failover.validate_local_enriched_playlist(candidate)
+
+    def test_invalid_local_activation_preserves_active_playlist(self):
+        before = self.active.read_bytes()
+        invalid = self.materialize_fixture("missing-track-id.m3u")
+        with self.assertRaises(RuntimeError):
+            archive_failover.activate(invalid, "local")
+        self.assertEqual(self.active.read_bytes(), before)
+
+    def test_two_failures_switch_only_with_valid_enriched_playlist(self):
+        self.write_state("remote")
+        self.run_cycle(False)
+        state = self.run_cycle(False)
+        self.assertEqual(state["mode"], "local")
+        self.assertEqual(self.active.read_bytes(), self.local.read_bytes())
+
+    def test_invalid_enriched_playlist_blocks_switch_and_state_persistence(self):
+        self.write_state("remote")
+        self.run_cycle(False)
+        persisted_before = self.state.read_bytes()
+        active_before = self.active.read_bytes()
+        self.materialize_fixture("missing-track-id.m3u", destination=self.local)
+
+        with mock.patch.object(
+            archive_failover,
+            "probe_archive",
+            return_value=(False, "503|text/html|100"),
+        ), contextlib.redirect_stdout(io.StringIO()):
+            with self.assertRaisesRegex(RuntimeError, "track_id"):
+                archive_failover.main()
+
+        self.assertEqual(self.active.read_bytes(), active_before)
+        self.assertEqual(self.state.read_bytes(), persisted_before)
+        self.assertEqual(self.read_state()["mode"], "remote")
+        self.assertIn("SWITCH-BLOCKED", self.log.read_text(encoding="utf-8"))
 
     def test_probe_accepts_current_status_type_and_byte_combinations(self):
         reports = [
@@ -234,11 +388,11 @@ class ArchiveFailoverTest(unittest.TestCase):
         self.assertEqual(command.count(archive_failover.PROBE_URL), 1)
         self.assertTrue(archive_failover.PROBE_URL.endswith(".mp3"))
 
-    def test_current_playlist_targets_are_plain_local_and_canonical_remote(self):
+    def test_current_playlist_targets_are_enriched_local_and_canonical_remote(self):
         deployed_root = Path("/opt/swr-radio")
         self.assertEqual(
-            Path("/opt/swr-radio/cache/emergency-local.m3u"),
-            deployed_root / "cache" / "emergency-local.m3u",
+            Path("/opt/swr-radio/cache/emergency-local-enriched.m3u"),
+            deployed_root / "cache" / "emergency-local-enriched.m3u",
         )
         self.assertEqual(
             Path("/opt/swr-radio/cache/playlist.m3u"),
@@ -248,7 +402,10 @@ class ArchiveFailoverTest(unittest.TestCase):
         spec = importlib.util.spec_from_file_location("archive_failover_targets", SCRIPT)
         unpatched = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(unpatched)
-        self.assertEqual(unpatched.LOCAL_PLAYLIST, deployed_root / "cache/emergency-local.m3u")
+        self.assertEqual(
+            unpatched.LOCAL_PLAYLIST,
+            deployed_root / "cache" / "emergency-local-enriched.m3u",
+        )
         self.assertEqual(unpatched.REMOTE_PLAYLIST, deployed_root / "cache/playlist.m3u")
 
     def test_malformed_json_state_falls_back_to_defaults(self):
