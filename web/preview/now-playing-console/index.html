@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Now Playing Console · Isolated Visual Lab</title>
+  <meta name="description" content="Isolated MDK Space Radio now-playing visual laboratory.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#console">Skip laboratory controls</a>
+  <header class="lab-header">
+    <div>
+      <p class="eyebrow">MDK SPACE RADIO / ISOLATED LAB 04</p>
+      <h1>Now Playing Console</h1>
+    </div>
+    <div class="lab-status"><span aria-hidden="true"></span> STATIC FIXTURES · NO LIVE RADIO</div>
+  </header>
+
+  <main class="lab-shell">
+    <aside class="lab-controls" aria-label="Simulation controls">
+      <section>
+        <h2>Scenarios</h2>
+        <div class="scenario-grid" id="scenarioControls">
+          <button type="button" data-scenario="normal">Normal track</button>
+          <button type="button" data-scenario="short">Short title</button>
+          <button type="button" data-scenario="long">Extreme title</button>
+          <button type="button" data-scenario="change">Track change</button>
+          <button type="button" data-scenario="last30">Last 30 sec</button>
+          <button type="button" data-scenario="last10">Last 10 sec</button>
+          <button type="button" data-scenario="crossfade">Crossfade active</button>
+          <button type="button" data-scenario="newCover">New cover</button>
+          <button type="button" data-scenario="noCover">Cover absent</button>
+          <button type="button" data-scenario="unknown">Unknown metadata</button>
+          <button type="button" data-scenario="slow">Slow connection</button>
+          <button type="button" data-scenario="reduced">Reduced motion</button>
+          <button type="button" data-scenario="mobile">Mobile layout</button>
+        </div>
+      </section>
+
+      <section class="variant-controls">
+        <h2>Variants</h2>
+        <label>Title treatment
+          <select id="titleVariant">
+            <option value="single">A · single-line scroll</option>
+            <option value="split" selected>B · two-line selective · recommended</option>
+            <option value="continuous">C · continuous ticker</option>
+          </select>
+        </label>
+        <label>Waveform
+          <select id="waveVariant">
+            <option value="single">1 · single + XFADE region</option>
+            <option value="overlay" selected>2 · dual overlay · recommended</option>
+            <option value="stacked">3 · dual stacked</option>
+          </select>
+        </label>
+        <label>Cover transition
+          <select id="coverVariant">
+            <option value="scan" selected>1 · scan-mask · recommended</option>
+            <option value="shutter">2 · horizontal shutter</option>
+            <option value="phosphor">3 · phosphor overwrite</option>
+            <option value="aperture">4 · aperture slit</option>
+          </select>
+        </label>
+        <label>Controls
+          <select id="controlVariant">
+            <option value="rows">A · two visible rows</option>
+            <option value="more" selected>B · primary + More · recommended</option>
+          </select>
+        </label>
+      </section>
+
+      <section>
+        <h2>Direct state</h2>
+        <label>Remaining <output id="remainingOutput">235 s</output>
+          <input id="remainingRange" type="range" min="0" max="409" value="235">
+        </label>
+        <label>Crossfade <output id="crossfadeOutput">0%</output>
+          <input id="crossfadeRange" type="range" min="0" max="100" value="0">
+        </label>
+      </section>
+      <p class="lab-note">Keyboard: focus a ticker and press Space to pause it. All simulations are local.</p>
+    </aside>
+
+    <section class="preview-stage" aria-label="Now playing component preview">
+      <article class="console" id="console" data-title-variant="split" data-wave-variant="overlay" data-cover-transition="scan" data-controls="more">
+        <header class="console-head">
+          <div class="console-ident">
+            <span class="console-mark">MDK</span>
+            <span>SPACE RADIO / NOW PLAYING</span>
+          </div>
+          <div class="carrier-state terminal-change" id="connectionState"><i aria-hidden="true"></i><span id="connectionText">CARRIER LOCKED</span></div>
+        </header>
+
+        <div class="console-body">
+          <section class="cover-column" aria-label="Current release artwork">
+            <div class="cover-frame" id="coverFrame">
+              <div class="cover-art cover-citrine" id="coverArt" role="img" aria-label="Procedural dummy cover for current release">
+                <span class="cover-grid" aria-hidden="true"></span>
+                <strong id="coverCode">062</strong><small>MDK ARCHIVE</small>
+              </div>
+              <div class="cover-transition-layer" aria-hidden="true"></div>
+              <div class="cover-missing" id="coverMissing" hidden><span>NO IMAGE<br>ON CARRIER</span></div>
+            </div>
+            <div class="artwork-meta"><span>ARTWORK CHANNEL</span><b id="artworkState">RECEIVED</b></div>
+          </section>
+
+          <section class="transmission-column">
+            <div class="metadata-block">
+              <div class="metadata-kicker"><span>NOW TRANSMITTING</span><time class="terminal-change" id="startedAt">03:44:08 UTC</time></div>
+              <div class="title-shell ticker" id="titleTicker" tabindex="0" role="group" aria-label="Current track title. Press Space to pause scrolling.">
+                <span class="sr-only" id="fullTitle">Marmalade Insights</span>
+                <div class="terminal-line title-line" id="titleLine" aria-hidden="true">
+                  <span class="ticker-track"><span class="ticker-copy" id="titleText">Marmalade Insights</span><span class="ticker-clone" aria-hidden="true"></span></span>
+                </div>
+                <div class="split-title" id="splitTitle" aria-hidden="true">
+                  <span id="splitTitleFirst"></span>
+                  <span class="split-scroll"><span id="splitTitleSecond"></span></span>
+                </div>
+              </div>
+              <p class="release-line terminal-line" aria-label="Current release"><span id="releaseText">MDK062 · Notes From the Listening Room</span></p>
+              <div class="catalog-row"><span id="catalogText">MDK062 / TRACK 02</span><span id="trackId">MDK062-D01-T02</span></div>
+            </div>
+
+            <section class="wave-module" aria-labelledby="waveTitle">
+              <header>
+                <div><span class="module-index">02</span><h2 id="waveTitle">TIMELINE / SIGNAL ENVELOPE</h2></div>
+                <div class="time-readout"><b id="elapsedText">02:54</b><span>−<span id="remainingText">03:55</span></span></div>
+              </header>
+              <div class="wave-stage" id="waveStage">
+                <canvas id="waveCanvas" aria-label="Dummy waveform showing track progress and crossfade region"></canvas>
+                <div class="timeline-redraw" aria-hidden="true"></div>
+                <div class="crossfade-bracket" id="crossfadeBracket"><span>XFADE 10 SEC</span></div>
+                <div class="wave-label outgoing-label">OUTGOING</div>
+                <div class="wave-label incoming-label">INCOMING</div>
+              </div>
+              <div class="timeline-ticks" aria-hidden="true"><span>00:00</span><i></i><span>25%</span><i></i><span>50%</span><i></i><span>75%</span><i></i><span>END</span></div>
+              <div class="xfade-status" id="xfadeStatus" role="status" aria-live="polite">
+                <span class="xfade-glyph" aria-hidden="true">X</span>
+                <strong id="xfadeLabel">SEQUENCE STABLE</strong>
+                <span id="xfadeDetail">Crossfade region armed at T−10</span>
+              </div>
+            </section>
+
+            <section class="action-zone" aria-label="Playback and track actions">
+              <div class="primary-actions">
+                <button class="mute-button" id="muteButton" type="button" aria-label="Mute stream" aria-pressed="false"><span aria-hidden="true">◼</span><span>Mute</span></button>
+                <a class="track-action" href="#fixture-track" aria-label="Get this track">Get This Track <span aria-hidden="true">↗</span></a>
+                <button class="more-button" id="moreButton" type="button" aria-expanded="false" aria-controls="secondaryActions">More <span aria-hidden="true">＋</span></button>
+              </div>
+              <div class="secondary-actions" id="secondaryActions">
+                <a href="#stream">Direct Stream</a><a href="#m3u">M3U</a><a href="#pls">PLS</a><a href="#archive">Archive</a><a href="#support">Support</a>
+              </div>
+            </section>
+          </section>
+        </div>
+
+        <footer class="console-footer">
+          <span><b>MP3</b> 160 KBPS</span><span><b>START</b> INCOMING XFADE EDGE</span><span><b>STREAM EST</b> +3.0 S DIAGNOSTIC</span><span id="motionState"><b>MOTION</b> SYSTEM</span>
+        </footer>
+      </article>
+      <p class="preview-caption">Recommended composition: dual overlay waveform · scan-mask cover · primary actions + More</p>
+    </section>
+  </main>
+
+  <script src="waveform-fixtures.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
