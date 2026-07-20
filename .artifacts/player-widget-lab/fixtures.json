@@ -1,0 +1,44 @@
+{
+  "schema": "mdk-player-widget-lab-v1",
+  "tracks": [
+    {
+      "id": "emergency-040",
+      "library_position": 40,
+      "title": "Casting the shadow",
+      "artist": "MDK",
+      "release_id": "MDK086",
+      "release_title": "The Solar Lodge",
+      "track_number": 5,
+      "duration_seconds": 75.572245,
+      "audio_file": "040-efeca1d118-MDK - 086- The Solar Lodge - 05 Casting the shadow.mp3",
+      "cover_file": "MDK086.png",
+      "waveform": "waveforms/short.json"
+    },
+    {
+      "id": "emergency-042",
+      "library_position": 42,
+      "title": "I was waiting on you",
+      "artist": "MDK",
+      "release_id": "MDK105",
+      "release_title": "You can dance to this",
+      "track_number": 3,
+      "duration_seconds": 358.321633,
+      "audio_file": "042-b5d411df2d-MDK - 105- You can dance to this - 03 I was waiting on you.mp3",
+      "cover_file": "MDK105.png",
+      "waveform": "waveforms/medium.json"
+    },
+    {
+      "id": "emergency-044",
+      "library_position": 44,
+      "title": "The Differences",
+      "artist": "MDK",
+      "release_id": "MDK015",
+      "release_title": "The Now",
+      "track_number": 4,
+      "duration_seconds": 1311.529796,
+      "audio_file": "044-c5a484c847-MDK - 015- The Now - 04 The Differences.mp3",
+      "cover_file": "MDK015.png",
+      "waveform": "waveforms/long.json"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MDK Space Radio · Broadcast prototype</title>
+  <link rel="stylesheet" href="/web/styles.css">
+  <link rel="stylesheet" href="prototype.css">
+</head>
+<body class="broadcast-view broadcast-prototype" data-broadcast-state="standby">
+  <div class="ambient-background" aria-hidden="true"><div class="ambient-display"><div class="ambient-grid"></div><div class="ambient-traces"><span></span><span></span><span></span><span></span><span></span><span></span></div></div></div>
+
+  <div id="broadcastStartOverlay" class="broadcast-start-overlay" role="status" aria-live="polite" hidden>
+    <div class="broadcast-start-panel"><strong>Transmission standby</strong><span>Click anywhere to engage audio</span></div>
+  </div>
+
+  <div class="shell">
+    <main class="terminal">
+      <header class="topbar">
+        <div class="brand"><div class="brand-logo" aria-label="MDK Space Radio"><span class="brand-mark">MDK</span><span class="brand-signal" aria-hidden="true"></span><span class="brand-title">Space Radio</span></div><div class="brand-sub">24/7 experimental electronic transmission</div></div>
+        <div class="topbar-actions"><div class="live-pill"><span class="dot"></span><span id="liveText">FIXTURE TRANSMISSION</span></div><time id="localClock" class="local-clock" aria-label="Local time">--:--</time></div>
+      </header>
+
+      <section class="content"><section class="main-panel">
+        <article id="broadcastNowCard" class="now-card broadcast-now-card" data-connection="standby">
+          <section class="broadcast-cover-column" aria-label="Current release artwork"><div class="broadcast-cover-frame"><img id="cover" class="cover" src="" alt="Current MDK release cover"></div></section>
+          <section class="broadcast-player-meta">
+            <div class="broadcast-now-label"><span id="nowLabel">NOW TRANSMITTING</span><span id="incomingSignal" class="incoming-signal" hidden>INCOMING SIGNAL</span></div>
+            <h1 id="track" class="broadcast-track-title">Acquiring signal…</h1>
+            <div id="metadataBand" class="metadata-band"><span><small>RELEASE</small><b id="releaseId">—</b></span><span><small>ALBUM</small><b id="release">MDK archive</b></span><span><small>TRACK</small><b id="trackNumber">—</b></span></div>
+            <div class="broadcast-waveform"><div class="waveform-viewport"><canvas id="broadcastWaveform" aria-label="Precomputed local track waveform"></canvas></div><div class="wave-time"><span id="elapsed">0:00</span><span id="remaining">−--:--</span></div></div>
+            <div id="broadcastState" class="broadcast-state" role="status" aria-live="polite"><span class="state-mark" aria-hidden="true"></span><span id="broadcastStateText">STANDBY · USER GESTURE REQUIRED</span></div>
+            <div class="broadcast-listen" aria-label="Listen to MDK Space Radio live"><span class="broadcast-listen-label">Listen live</span><span class="broadcast-listen-url">radio.mdkband.com</span><span class="broadcast-listen-sub">MDK Space Radio · 24/7 experimental transmission</span></div>
+            <div class="broadcast-system-widgets" aria-label="Derived broadcast instruments"></div>
+          </section>
+        </article>
+        <section class="about-card" aria-label="About MDK"><div class="label">About MDK</div><p>MDK is Mik Schuppin, Diego Madero &amp; Kai Kraatz — three humans creating, performing and hand-crafting experimental electronic music across Germany and Mexico.</p></section>
+
+        <section class="subgrid">
+          <div class="box monitor"><div class="label">Spectrum monitor</div><div id="spectrumWrap" class="spectrum-wrap"><canvas id="spectrum" aria-label="Audio spectrum monitor"></canvas><div class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="frequency-scale" aria-hidden="true"><span>10</span><span>50</span><span>200</span><span>1k</span><span>5k</span><span>10k</span><span>20k Hz</span></div></div>
+            <div class="telemetry-instruments" aria-label="Derived transmission telemetry">
+              <section class="telemetry-module orbit-module"><header><span>orbital acquisition</span><b data-telemetry-release>MDK</b></header><svg viewBox="0 0 180 86" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><g class="orbit-grid"><ellipse cx="88" cy="43" rx="71" ry="27"/><ellipse cx="88" cy="43" rx="48" ry="18"/><path d="M7 43H169M88 5V81M28 18L148 68M29 68L148 18"/></g><path class="orbit-path" d="M20 58C42 8 133 8 160 53C139 82 51 82 20 58Z"/><g class="orbit-satellite"><circle cx="0" cy="0" r="3"/><path d="M-8 0H8M0-6V6"/></g><circle class="orbit-core" cx="88" cy="43" r="7"/></svg><footer><span data-telemetry-az>AZ --</span><span data-telemetry-el>EL --</span><strong>DERIVED</strong></footer></section>
+              <section class="telemetry-module carrier-module"><header><span>carrier integrity</span><b data-telemetry-channel>CH–--</b></header><div class="carrier-readout"><strong data-telemetry-lock>--.-</strong><small>derived lock</small></div><div class="carrier-rail"><i></i><em></em></div><div class="carrier-meta"><span>LIVE<br><b data-telemetry-listeners>0</b></span><span>PROG<br><b data-telemetry-progress>0.0%</b></span><span>TRACK<br><b data-telemetry-channel>CH–--</b></span></div></section>
+              <section class="telemetry-module matrix-module"><header><span>channel matrix</span><b data-telemetry-channel>CH–--</b></header><div class="telemetry-matrix" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><footer><span data-telemetry-matrix-progress>PROG 0.0%</span><span data-telemetry-matrix-live>LIVE 0</span><strong>DERIVED</strong></footer></section>
+            </div>
+          </div>
+          <div class="box log"><div class="label">Transmission log</div><div id="archiveRegister" aria-label="Fixture-derived transmission log archive register"></div><section class="relay-terminal" aria-label="Fixture-derived release text relay log" aria-live="off"></section></div>
+        </section>
+      </section></section>
+
+      <footer class="footer"><span id="statusLine">status: fixture standby</span><span class="app-version">Broadcast integration prototype</span><span>music by MDK · CC BY 3.0</span><span class="official-site">mdkband.com</span></footer>
+    </main>
+  </div>
+
+  <aside class="lab-controls" aria-label="Local fixture controls"><label>FIXTURE <select id="fixtureTrack"></select></label><label>STATE <select id="fixtureState"><option value="normal">TRANSMITTING</option><option value="metadata">METADATA UNAVAILABLE</option><option value="unavailable">AUDIO UNAVAILABLE</option><option value="standby">STANDBY</option></select></label><label><input id="reducedMotion" type="checkbox"> REDUCED MOTION</label></aside>
+  <audio id="radio" data-role="persistent-primary-audio" preload="metadata" crossorigin="anonymous"></audio>
+  <script src="/web/ui-widgets.js"></script>
+  <script src="../player-integrated-preview/preview-model.js"></script>
+  <script src="prototype.js"></script>
+</body>
+</html>

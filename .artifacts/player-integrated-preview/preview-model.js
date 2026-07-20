@@ -1,0 +1,8 @@
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.IntegratedPreviewModel=api;}(typeof globalThis!=='undefined'?globalThis:this,function(){'use strict';
+function clamp(value,min,max){return Math.max(min,Math.min(max,value));}
+function adaptiveColumnCount(width,duration){const mobile=width<=520;const min=mobile?48:96,max=mobile?72:160;const durationBoost=mobile?Math.round((Number(duration)||0)/20):Math.round((Number(duration)||0)/12);const widthLimit=Math.floor(width/(mobile?4.5:4));return clamp(Math.min(max,widthLimit),Math.min(min,widthLimit),max-durationBoost>min?min+durationBoost:max);}
+function downsample(values,count){const output=[];for(let index=0;index<count;index++){let peak=0;for(let source=Math.floor(index*values.length/count);source<Math.ceil((index+1)*values.length/count);source++)peak=Math.max(peak,values[Math.min(values.length-1,source)]||0);output.push(peak);}return output;}
+function progressRatio(current,duration){if(!Number.isFinite(current)||!Number.isFinite(duration)||duration<=0)return 0;return clamp(current/duration,0,1);}
+function connectionPresentation(state){if(state==='connecting')return{label:'ACQUIRING SIGNAL',symbol:'▶',note:'SEARCHING'};if(state==='connected')return{label:'DISCONNECT',symbol:'■',note:'SIGNAL LOCKED'};if(state==='unavailable')return{label:'CONNECT',symbol:'▶',note:'AUDIO UNAVAILABLE'};return{label:'CONNECT',symbol:'▶',note:'READY'};}
+const TRANSITION_STATES=Object.freeze(['forecast','flicker','persistence','writing','wave-reveal','complete']);
+return{TRANSITION_STATES,adaptiveColumnCount,connectionPresentation,downsample,progressRatio};}));
